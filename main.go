@@ -26,9 +26,11 @@ var log = logrus.New()
 // @license.name MIT
 // @license.url https://github.com/Quons/go-gin-example/blob/master/LICENSE
 func main() {
-
 	var runmode string
 	flag.StringVar(&runmode, "runmode", "dev", "runmode:dev,test,pre,prod;default dev mode")
+	flag.Parse()
+	logrus.Info("....." + runmode)
+
 	setting.Setup(runmode)
 	models.Setup()
 	logging.Setup()
