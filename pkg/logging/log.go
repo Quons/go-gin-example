@@ -1,79 +1,60 @@
 package logging
 
 import (
-	"fmt"
-	"github.com/EDDYCJY/go-gin-example/pkg/file"
-	"log"
-	"os"
+	"github.com/Quons/go-gin-example/pkg/file"
+	"github.com/pkg/errors"
+	"time"
 	"path/filepath"
-	"runtime"
-)
-
-type Level int
-
-var (
-	F *os.File
-
-	DefaultPrefix      = ""
-	DefaultCallerDepth = 2
-
-	logger     *log.Logger
-	logPrefix  = ""
-	levelFlags = []string{"DEBUG", "INFO", "WARN", "ERROR", "FATAL"}
-)
-
-const (
-	DEBUG Level = iota
-	INFO
-	WARNING
-	ERROR
-	FATAL
+	"github.com/lestrrat/go-file-rotatelogs"
+	"github.com/sirupsen/logrus"
+	"github.com/rifflock/lfshook"
+	"github.com/Quons/go-gin-example/pkg/setting"
 )
 
 func Setup() {
-	var err error
-	filePath := getLogFilePath()
-	fileName := getLogFileName()
-	F, err = file.MustOpen(fileName, filePath)
+	//获取执行目录
+	logPath, err := file.MkRdir("log")
 	if err != nil {
-		log.Fatalln(err)
+		logrus.Fatal("get log path error")
 	}
-
-	logger = log.New(F, DefaultPrefix, log.LstdFlags)
-}
-
-func Debug(v ...interface{}) {
-	setPrefix(DEBUG)
-	logger.Println(v)
-}
-
-func Info(v ...interface{}) {
-	setPrefix(INFO)
-	logger.Println(v)
-}
-
-func Warn(v ...interface{}) {
-	setPrefix(WARNING)
-	logger.Println(v)
-}
-
-func Error(v ...interface{}) {
-	setPrefix(ERROR)
-	logger.Println(v)
-}
-
-func Fatal(v ...interface{}) {
-	setPrefix(FATAL)
-	logger.Fatalln(v)
-}
-
-func setPrefix(level Level) {
-	_, file, line, ok := runtime.Caller(DefaultCallerDepth)
-	if ok {
-		logPrefix = fmt.Sprintf("[%s][%s:%d]", levelFlags[level], filepath.Base(file), line)
-	} else {
-		logPrefix = fmt.Sprintf("[%s]", levelFlags[level])
+	dirName, err := file.GetDirName()
+	if err != nil {
+		logrus.Fatal("get dirName error")
 	}
-
-	logger.SetPrefix(logPrefix)
+	//设置日志级别
+	logLevel, err := logrus.ParseLevel(setting.AppSetting.LogLevel)
+	if err != nil {
+		logrus.Fatal(err.Error())
+	}
+	logrus.SetLevel(logLevel)
+	//打印行号，funcName
+	logrus.SetReportCaller(true)
+	//输出设置
+	writer, err := rotatelogs.New(
+		filepath.Join(logPath, dirName+".%Y%m%d%H%M"),
+		rotatelogs.WithLinkName(filepath.Join(logPath, dirName+".log")), // 生成软链，指向最新日志文件
+		rotatelogs.WithMaxAge(10*time.Hour*24),                          // 文件最大保存时间
+		rotatelogs.WithRotationTime(time.Hour*24),                       // 日志切割时间间隔
+	)
+	if err != nil {
+		logrus.Fatalf("config local file system logger error.%+v", errors.WithStack(err))
+	}
+	//设置local file system hook
+	lfsHook := lfshook.NewHook(lfshook.WriterMap{
+		logrus.DebugLevel: writer,
+		logrus.InfoLevel:  writer,
+		logrus.WarnLevel:  writer,
+		logrus.ErrorLevel: writer,
+		logrus.FatalLevel: writer,
+		logrus.PanicLevel: writer,
+	}, &logrus.TextFormatter{
+		//是否显示颜色
+		ForceColors: true,
+		//输出字段排序设置
+		DisableSorting: true,
+		//设置日志格式
+		TimestampFormat: "2006-01-02 15:04:05",
+	})
+	//添加hook
+	logrus.AddHook(lfsHook)
 }

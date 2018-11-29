@@ -1,10 +1,12 @@
+basePath: '{{.BasePath}}'
+host: '{{.Host}}'
 info:
   contact: {}
   description: An example of gin
   license:
     name: MIT
-    url: https://github.com/EDDYCJY/go-gin-example/blob/master/LICENSE
-  termsOfService: https://github.com/EDDYCJY/go-gin-example
+    url: https://github.com/Quons/go-gin-example/blob/master/LICENSE
+  termsOfService: https://github.com/Quons/go-gin-example
   title: Golang Gin API
   version: "1.0"
 paths:
@@ -163,9 +165,9 @@ paths:
       - description: CreatedBy
         in: query
         name: created_by
-        type: integer
+        type: string
       produces:
-      - application/json
+      - text/xml
       responses:
         "200":
           description: '{"code":200,"data":{},"msg":"ok"}'
@@ -209,4 +211,30 @@ paths:
           schema:
             type: string
       summary: 修改文章标签
+  /api/v1/tags/export:
+    post:
+      parameters:
+      - {}
+      - {}
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{"export_save_url":"export/abc.xlsx", "export_url":
+            "http://..."},"msg":"ok"}'
+          schema:
+            type: string
+      summary: 导出文章标签
+  /api/v1/tags/import:
+    post:
+      parameters:
+      - {}
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":null,"msg":"ok"}'
+          schema:
+            type: string
+      summary: 导入文章标签
 swagger: "2.0"

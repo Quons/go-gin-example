@@ -5,10 +5,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/EDDYCJY/go-gin-example/pkg/app"
-	"github.com/EDDYCJY/go-gin-example/pkg/e"
-	"github.com/EDDYCJY/go-gin-example/pkg/logging"
-	"github.com/EDDYCJY/go-gin-example/pkg/upload"
+	"github.com/Quons/go-gin-example/pkg/app"
+	"github.com/Quons/go-gin-example/pkg/e"
+	"github.com/Quons/go-gin-example/pkg/upload"
+	"github.com/sirupsen/logrus"
 )
 
 // @Summary 上传图片
@@ -20,7 +20,7 @@ func UploadImage(c *gin.Context) {
 	appG := app.Gin{C: c}
 	file, image, err := c.Request.FormFile("image")
 	if err != nil {
-		logging.Warn(err)
+		logrus.Warn(err)
 		appG.Response(http.StatusOK, e.ERROR, nil)
 		return
 	}
@@ -42,13 +42,13 @@ func UploadImage(c *gin.Context) {
 
 	err = upload.CheckImage(fullPath)
 	if err != nil {
-		logging.Warn(err)
+		logrus.Warn(err)
 		appG.Response(http.StatusOK, e.ERROR_UPLOAD_CHECK_IMAGE_FAIL, nil)
 		return
 	}
 
 	if err := c.SaveUploadedFile(image, src); err != nil {
-		logging.Warn(err)
+		logrus.Warn(err)
 		appG.Response(http.StatusOK, e.ERROR_UPLOAD_SAVE_IMAGE_FAIL, nil)
 		return
 	}

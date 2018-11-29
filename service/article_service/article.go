@@ -3,10 +3,10 @@ package article_service
 import (
 	"encoding/json"
 
-	"github.com/EDDYCJY/go-gin-example/models"
-	"github.com/EDDYCJY/go-gin-example/pkg/gredis"
-	"github.com/EDDYCJY/go-gin-example/pkg/logging"
-	"github.com/EDDYCJY/go-gin-example/service/cache_service"
+	"github.com/Quons/go-gin-example/models"
+	"github.com/Quons/go-gin-example/pkg/gredis"
+	"github.com/Quons/go-gin-example/service/cache_service"
+	"github.com/sirupsen/logrus"
 )
 
 type Article struct {
@@ -49,7 +49,7 @@ func (a *Article) Edit() error {
 		"desc":            a.Desc,
 		"content":         a.Content,
 		"cover_image_url": a.CoverImageUrl,
-		"state":		   a.State,
+		"state":           a.State,
 		"modified_by":     a.ModifiedBy,
 	})
 }
@@ -62,7 +62,7 @@ func (a *Article) Get() (*models.Article, error) {
 	if gredis.Exists(key) {
 		data, err := gredis.Get(key)
 		if err != nil {
-			logging.Info(err)
+			logrus.Error(err)
 		} else {
 			json.Unmarshal(data, &cacheArticle)
 			return cacheArticle, nil
@@ -94,7 +94,7 @@ func (a *Article) GetAll() ([]*models.Article, error) {
 	if gredis.Exists(key) {
 		data, err := gredis.Get(key)
 		if err != nil {
-			logging.Info(err)
+			logrus.Info(err)
 		} else {
 			json.Unmarshal(data, &cacheArticles)
 			return cacheArticles, nil

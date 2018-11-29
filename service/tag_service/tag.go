@@ -9,11 +9,11 @@ import (
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/tealeg/xlsx"
 
-	"github.com/EDDYCJY/go-gin-example/models"
-	"github.com/EDDYCJY/go-gin-example/pkg/export"
-	"github.com/EDDYCJY/go-gin-example/pkg/gredis"
-	"github.com/EDDYCJY/go-gin-example/pkg/logging"
-	"github.com/EDDYCJY/go-gin-example/service/cache_service"
+	"github.com/Quons/go-gin-example/models"
+	"github.com/Quons/go-gin-example/pkg/export"
+	"github.com/Quons/go-gin-example/pkg/gredis"
+	"github.com/Quons/go-gin-example/service/cache_service"
+	"github.com/sirupsen/logrus"
 )
 
 type Tag struct {
@@ -73,7 +73,7 @@ func (t *Tag) GetAll() ([]models.Tag, error) {
 	if gredis.Exists(key) {
 		data, err := gredis.Get(key)
 		if err != nil {
-			logging.Info(err)
+			logrus.Info(err)
 		} else {
 			json.Unmarshal(data, &cacheTags)
 			return cacheTags, nil

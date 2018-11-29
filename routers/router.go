@@ -5,26 +5,25 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	_ "github.com/EDDYCJY/go-gin-example/docs"
+	_ "github.com/Quons/go-gin-example/docs"
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 
-	"github.com/EDDYCJY/go-gin-example/middleware/jwt"
-	"github.com/EDDYCJY/go-gin-example/pkg/export"
-	"github.com/EDDYCJY/go-gin-example/pkg/qrcode"
-	"github.com/EDDYCJY/go-gin-example/pkg/setting"
-	"github.com/EDDYCJY/go-gin-example/pkg/upload"
-	"github.com/EDDYCJY/go-gin-example/routers/api"
-	"github.com/EDDYCJY/go-gin-example/routers/api/v1"
+	"github.com/Quons/go-gin-example/pkg/export"
+	"github.com/Quons/go-gin-example/pkg/qrcode"
+	"github.com/Quons/go-gin-example/pkg/setting"
+	"github.com/Quons/go-gin-example/pkg/upload"
+	"github.com/Quons/go-gin-example/routers/api"
+	"github.com/Quons/go-gin-example/routers/api/v1"
+	"github.com/Quons/go-gin-example/middleware/jwt"
 )
 
 func InitRouter() *gin.Engine {
-	r := gin.New()
 
-	r.Use(gin.Logger())
-
-	r.Use(gin.Recovery())
 	gin.SetMode(setting.ServerSetting.RunMode)
+	r := gin.Default()
+	r.Use(gin.Logger())
+	r.Use(gin.Recovery())
 
 	r.StaticFS("/export", http.Dir(export.GetExcelFullPath()))
 	r.StaticFS("/upload/images", http.Dir(upload.GetImageFullPath()))
@@ -33,8 +32,8 @@ func InitRouter() *gin.Engine {
 	r.GET("/auth", api.GetAuth)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.POST("/upload", api.UploadImage)
-
 	apiv1 := r.Group("/api/v1")
+	//验证token
 	apiv1.Use(jwt.JWT())
 	{
 		//获取标签列表

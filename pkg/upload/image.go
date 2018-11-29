@@ -8,10 +8,10 @@ import (
 	"path"
 	"strings"
 
-	"github.com/EDDYCJY/go-gin-example/pkg/file"
-	"github.com/EDDYCJY/go-gin-example/pkg/logging"
-	"github.com/EDDYCJY/go-gin-example/pkg/setting"
-	"github.com/EDDYCJY/go-gin-example/pkg/util"
+	"github.com/Quons/go-gin-example/pkg/file"
+	"github.com/Quons/go-gin-example/pkg/setting"
+	"github.com/Quons/go-gin-example/pkg/util"
+	"github.com/sirupsen/logrus"
 )
 
 func GetImageFullUrl(name string) string {
@@ -49,7 +49,7 @@ func CheckImageSize(f multipart.File) bool {
 	size, err := file.GetSize(f)
 	if err != nil {
 		log.Println(err)
-		logging.Warn(err)
+		logrus.Warn(err)
 		return false
 	}
 

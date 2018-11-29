@@ -7,13 +7,13 @@ import (
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
 
-	"github.com/EDDYCJY/go-gin-example/pkg/app"
-	"github.com/EDDYCJY/go-gin-example/pkg/e"
-	"github.com/EDDYCJY/go-gin-example/pkg/export"
-	"github.com/EDDYCJY/go-gin-example/pkg/logging"
-	"github.com/EDDYCJY/go-gin-example/pkg/setting"
-	"github.com/EDDYCJY/go-gin-example/pkg/util"
-	"github.com/EDDYCJY/go-gin-example/service/tag_service"
+	"github.com/Quons/go-gin-example/pkg/app"
+	"github.com/Quons/go-gin-example/pkg/e"
+	"github.com/Quons/go-gin-example/pkg/export"
+	"github.com/Quons/go-gin-example/pkg/setting"
+	"github.com/Quons/go-gin-example/pkg/util"
+	"github.com/Quons/go-gin-example/service/tag_service"
+	"github.com/sirupsen/logrus"
 )
 
 // @Summary 获取多个文章标签
@@ -64,7 +64,7 @@ type AddTagForm struct {
 // @Produce  json
 // @Param name query string true "Name"
 // @Param state query int false "State"
-// @Param created_by query int false "CreatedBy"
+// @Param created_by query string false "CreatedBy"
 // @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
 // @Router /api/v1/tags [post]
 func AddTag(c *gin.Context) {
@@ -234,7 +234,7 @@ func ImportTag(c *gin.Context) {
 
 	file, _, err := c.Request.FormFile("file")
 	if err != nil {
-		logging.Warn(err)
+		logrus.Warn(err)
 		appG.Response(http.StatusOK, e.ERROR, nil)
 		return
 	}
@@ -242,7 +242,7 @@ func ImportTag(c *gin.Context) {
 	tagService := tag_service.Tag{}
 	err = tagService.Import(file)
 	if err != nil {
-		logging.Warn(err)
+		logrus.Warn(err)
 		appG.Response(http.StatusOK, e.ERROR_IMPORT_TAG_FAIL, nil)
 		return
 	}

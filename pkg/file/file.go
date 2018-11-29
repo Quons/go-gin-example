@@ -6,6 +6,10 @@ import (
 	"mime/multipart"
 	"os"
 	"path"
+	"path/filepath"
+	"os/exec"
+	"strings"
+	"github.com/sirupsen/logrus"
 )
 
 func GetSize(f multipart.File) (int, error) {
@@ -81,4 +85,52 @@ func MustOpen(fileName, filePath string) (*os.File, error) {
 	}
 
 	return f, nil
+}
+
+/*得到当前执行文件的的路径*/
+func GetExecPath() (string, error) {
+	execFile, err := exec.LookPath(os.Args[0])
+	if err != nil {
+		return "", err
+	}
+	path2, err := filepath.Abs(execFile)
+	fmt.Println(path2)
+	fmt.Println(execFile)
+	if err != nil {
+		return "", err
+	}
+	rst := filepath.Dir(path2)
+	return rst, nil
+}
+
+/*在项目目录下创建相对目录 make relative directory*/
+func MkRdir(p string) (string, error) {
+	rst, err := GetExecPath()
+	if err != nil {
+		return "", err
+	}
+	var isExistDir bool
+	dstPath := filepath.Join(rst, p)
+	_, err = os.Stat(dstPath)
+	if err == nil {
+		isExistDir = true
+	}
+	if os.IsNotExist(err) {
+		isExistDir = false
+	}
+	if !isExistDir {
+		os.Mkdir(dstPath, os.ModePerm)
+	}
+	return dstPath, nil
+}
+func GetDirName() (string, error) {
+	/*获取可执行文件名称*/
+	execFile, err := GetExecPath()
+	if err != nil {
+		logrus.Error(err.Error())
+		return "", err
+	}
+	lastIndex := strings.LastIndex(execFile, "/")
+	execFile = string([]rune(execFile)[lastIndex+1:])
+	return execFile, nil
 }
