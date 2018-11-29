@@ -14,6 +14,7 @@ import (
 	"github.com/Quons/go-gin-example/pkg/setting"
 	"github.com/Quons/go-gin-example/routers"
 	"github.com/sirupsen/logrus"
+	"flag"
 )
 
 var log = logrus.New()
@@ -25,7 +26,10 @@ var log = logrus.New()
 // @license.name MIT
 // @license.url https://github.com/Quons/go-gin-example/blob/master/LICENSE
 func main() {
-	setting.Setup()
+
+	var runmode string
+	flag.StringVar(&runmode, "runmode", "dev", "runmode:dev,test,pre,prod;default dev mode")
+	setting.Setup(runmode)
 	models.Setup()
 	logging.Setup()
 	gredis.Setup()

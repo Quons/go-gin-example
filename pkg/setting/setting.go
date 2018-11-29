@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/go-ini/ini"
+	"github.com/sirupsen/logrus"
 )
 
 type App struct {
@@ -26,7 +27,7 @@ type App struct {
 	LogSaveName string
 	LogFileExt  string
 	TimeFormat  string*/
-	LogLevel    string
+	LogLevel string
 }
 
 var AppSetting = &App{}
@@ -63,11 +64,23 @@ var RedisSetting = &Redis{}
 
 var cfg *ini.File
 
-func Setup() {
+func Setup(runmode string) {
 	var err error
-	cfg, err = ini.Load("conf/app.ini")
+	switch runmode {
+	case "dev":
+		cfg, err = ini.Load("conf/dev.ini")
+	case "test":
+		cfg, err = ini.Load("conf/test.ini")
+	case "pre":
+		cfg, err = ini.Load("conf/pre.ini")
+	case "prod":
+		cfg, err = ini.Load("conf/prod.ini")
+	default:
+		logrus.Fatal("invalid runmode,must be one of [dev,test,pre,prod]!")
+	}
+
 	if err != nil {
-		log.Fatalf("Fail to parse 'conf/app.ini': %v", err)
+		log.Fatalf("Fail to parse config file: %v", err)
 	}
 
 	mapTo("app", AppSetting)
