@@ -15,7 +15,6 @@ import (
 	"github.com/Quons/go-gin-example/pkg/upload"
 	"github.com/Quons/go-gin-example/routers/api"
 	"github.com/Quons/go-gin-example/routers/api/v1"
-	"github.com/Quons/go-gin-example/middleware/jwt"
 )
 
 func InitRouter() *gin.Engine {
@@ -34,7 +33,7 @@ func InitRouter() *gin.Engine {
 	r.POST("/upload", api.UploadImage)
 	apiv1 := r.Group("/api/v1")
 	//验证token
-	apiv1.Use(jwt.JWT())
+	//apiv1.Use(jwt.JWT())
 	{
 		//获取标签列表
 		apiv1.GET("/tags", v1.GetTags)
