@@ -6,6 +6,8 @@ import (
 
 	"github.com/go-ini/ini"
 	"github.com/sirupsen/logrus"
+	"github.com/Quons/go-gin-example/pkg/file"
+	"path/filepath"
 )
 
 type App struct {
@@ -65,20 +67,25 @@ var RedisSetting = &Redis{}
 var cfg *ini.File
 
 func Setup(runmode string) {
-	var err error
+	configFile := ""
 	switch runmode {
 	case "dev":
-		cfg, err = ini.Load("conf/dev.ini")
+		configFile = "dev.ini"
 	case "test":
-		cfg, err = ini.Load("conf/test.ini")
+		configFile = "test.ini"
 	case "pre":
-		cfg, err = ini.Load("conf/pre.ini")
+		configFile = "pre.ini"
 	case "prod":
-		cfg, err = ini.Load("conf/prod.ini")
+		configFile = "prod.ini"
 	default:
 		logrus.Fatal("invalid runmode,must be one of [dev,test,pre,prod]!")
 	}
-
+	//获取绝对路径
+	execPath, err := file.GetExecPath()
+	if err != nil {
+		logrus.Fatalf("get execPath error:%+v", err)
+	}
+	cfg, err = ini.Load(filepath.Join(execPath, "conf", configFile))
 	if err != nil {
 		log.Fatalf("Fail to parse config file: %v", err)
 	}
