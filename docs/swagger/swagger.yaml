@@ -10,6 +10,16 @@ info:
   title: Golang Gin API
   version: "1.0"
 paths:
+  /api/v1/articleAndTag:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{},"msg":"ok"}'
+          schema:
+            type: string
+      summary: 新增文章和标签
   /api/v1/articles:
     get:
       parameters:
@@ -167,7 +177,7 @@ paths:
         name: created_by
         type: string
       produces:
-      - text/xml
+      - application/json
       responses:
         "200":
           description: '{"code":200,"data":{},"msg":"ok"}'
@@ -233,8 +243,9 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"code":200,"data":null,"msg":"ok"}'
+          description: '{"code":200,"data":{"image_save_url":"upload/images/96a.jpg",
+            "image_url": "http://..."}'
           schema:
             type: string
-      summary: 导入文章标签
+      summary: 上传图片
 swagger: "2.0"

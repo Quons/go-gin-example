@@ -9,6 +9,8 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/rifflock/lfshook"
 	"github.com/Quons/go-gin-example/pkg/setting"
+	prefixed "github.com/x-cray/logrus-prefixed-formatter"
+
 )
 
 func Setup() {
@@ -55,6 +57,7 @@ func Setup() {
 		//设置日志格式
 		TimestampFormat: "2006-01-02 15:04:05",
 	})
+	logrus.SetFormatter(prefixed.TextFormatter{})
 	//添加hook
 	logrus.AddHook(lfsHook)
 }

@@ -15,6 +15,7 @@ import (
 	"github.com/Quons/go-gin-example/pkg/util"
 	"github.com/Quons/go-gin-example/service/article_service"
 	"github.com/Quons/go-gin-example/service/tag_service"
+	"github.com/sirupsen/logrus"
 )
 
 // @Summary 获取单个文章
@@ -65,11 +66,11 @@ func GetArticles(c *gin.Context) {
 	appG := app.Gin{C: c}
 	valid := validation.Validation{}
 
-	state := -1
-	if arg := c.PostForm("state"); arg != "" {
-		state = com.StrTo(arg).MustInt()
-		valid.Range(state, 0, 1, "state").Message("状态只允许0或1")
-	}
+	arg := c.Query("state")
+	logrus.Info("......arg:" + arg)
+	state := com.StrTo(arg).MustInt()
+	logrus.Infof("......state:%v", state)
+	valid.Range(state, 0, 1, "state").Message("状态只允许0或1")
 
 	tagId := -1
 	if arg := c.PostForm("tag_id"); arg != "" {
@@ -161,11 +162,23 @@ func AddArticle(c *gin.Context) {
 		CoverImageUrl: form.CoverImageUrl,
 		State:         form.State,
 	}
+
 	if err := articleService.Add(); err != nil {
 		appG.Response(http.StatusOK, e.ERROR_ADD_ARTICLE_FAIL, nil)
 		return
 	}
 
+	appG.Response(http.StatusOK, e.SUCCESS, nil)
+}
+
+// @Summary 新增文章和标签
+// @Produce  json
+// @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
+// @Router /api/v1/articleAndTag [get]
+func AddArticleAndTag(c *gin.Context) {
+	var appG = app.Gin{C: c}
+	a := &article_service.Article{TagID: 1, Title: "testArticle", Desc: "hiahia", Content: "testContent", CreatedBy: "quon", CoverImageUrl: "http"}
+	a.AddArticleAndTag()
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
 }
 
@@ -197,7 +210,7 @@ func EditArticle(c *gin.Context) {
 		appG = app.Gin{C: c}
 		form = EditArticleForm{ID: com.StrTo(c.Param("id")).MustInt()}
 	)
-
+	logrus.Infof(",c:%+v", c)
 	httpCode, errCode := app.BindAndValid(c, &form)
 	if errCode != e.SUCCESS {
 		appG.Response(httpCode, errCode, nil)
@@ -205,7 +218,7 @@ func EditArticle(c *gin.Context) {
 	}
 
 	articleService := article_service.Article{
-		ID:			   form.ID,
+		ID:            form.ID,
 		TagID:         form.TagID,
 		Title:         form.Title,
 		Desc:          form.Desc,

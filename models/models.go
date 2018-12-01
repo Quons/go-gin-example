@@ -9,9 +9,12 @@ import (
 
 	"github.com/Quons/go-gin-example/pkg/setting"
 	"time"
+	"strings"
+	"math/rand"
 )
 
-var db *gorm.DB
+var wdb *gorm.DB
+var readDbSlice []*gorm.DB
 
 type Model struct {
 	ID         int `gorm:"primary_key" json:"id"`
@@ -22,10 +25,10 @@ type Model struct {
 
 func Setup() {
 	var err error
-	db, err = gorm.Open(setting.DatabaseSetting.Type, fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local&timeout=5s",
-		setting.DatabaseSetting.User,
-		setting.DatabaseSetting.Password,
-		setting.DatabaseSetting.Host,
+	wdb, err = gorm.Open(setting.DatabaseSetting.Type, fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local&timeout=5s",
+		setting.DatabaseSetting.WUser,
+		setting.DatabaseSetting.WPassword,
+		setting.DatabaseSetting.WHost,
 		setting.DatabaseSetting.Name))
 
 	if err != nil {
@@ -35,17 +38,50 @@ func Setup() {
 	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
 		return setting.DatabaseSetting.TablePrefix + defaultTableName
 	}
+	wdb.LogMode(true)
 
-	db.SingularTable(true)
-	db.Callback().Create().Replace("gorm:update_time_stamp", updateTimeStampForCreateCallback)
-	db.Callback().Update().Replace("gorm:update_time_stamp", updateTimeStampForUpdateCallback)
-	db.Callback().Delete().Replace("gorm:delete", deleteCallback)
-	db.DB().SetMaxIdleConns(10)
-	db.DB().SetMaxOpenConns(100)
+	wdb.SingularTable(true)
+	wdb.Callback().Create().Replace("gorm:update_time_stamp", updateTimeStampForCreateCallback)
+	wdb.Callback().Update().Replace("gorm:update_time_stamp", updateTimeStampForUpdateCallback)
+	wdb.Callback().Delete().Replace("gorm:delete", deleteCallback)
+	wdb.DB().SetMaxIdleConns(10)
+	wdb.DB().SetMaxOpenConns(100)
+
+	rHosts := strings.Split(setting.DatabaseSetting.RHost, "|")
+	for _, rHost := range rHosts {
+		rdb, err := gorm.Open(setting.DatabaseSetting.Type, fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local&timeout=5s",
+			setting.DatabaseSetting.RUser,
+			setting.DatabaseSetting.RPassword,
+			rHost,
+			setting.DatabaseSetting.Name))
+
+		if err != nil {
+			log.Println(err)
+		}
+
+		gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
+			return setting.DatabaseSetting.TablePrefix + defaultTableName
+		}
+		rdb.LogMode(true)
+		rdb.SingularTable(true)
+		rdb.DB().SetMaxIdleConns(10)
+		rdb.DB().SetMaxOpenConns(100)
+		readDbSlice = append(readDbSlice, rdb)
+	}
+}
+
+//获取读库
+func readDB() *gorm.DB {
+	return readDbSlice[rand.Intn(len(readDbSlice))]
+}
+
+//获取写库
+func WriteDB() *gorm.DB {
+	return wdb
 }
 
 func CloseDB() {
-	defer db.Close()
+	defer wdb.Close()
 }
 
 // updateTimeStampForCreateCallback will set `CreatedOn`, `ModifiedOn` when creating
@@ -68,6 +104,14 @@ func updateTimeStampForCreateCallback(scope *gorm.Scope) {
 
 // updateTimeStampForUpdateCallback will set `ModifiedOn` when updating
 func updateTimeStampForUpdateCallback(scope *gorm.Scope) {
+	if _, ok := scope.Get("gorm:update_column"); !ok {
+		scope.SetColumn("ModifiedOn", time.Now().Unix())
+	}
+}
+
+// updateTimeStampForUpdateCallback will set `ModifiedOn` when updating
+func formatTimeStampForQueryCallback(scope *gorm.Scope) {
+
 	if _, ok := scope.Get("gorm:update_column"); !ok {
 		scope.SetColumn("ModifiedOn", time.Now().Unix())
 	}

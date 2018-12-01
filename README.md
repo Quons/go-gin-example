@@ -85,3 +85,46 @@ Swagger doc
 - App configurable
 - Cron
 - Redis
+
+
+##配置文件管理
+https://github.com/go-ini/ini
+配置文件分为dev ，test ，pre ，prod 四种模式，更改配置需要同时维护
+启动时通过runmode 标签进行选择，如 ./main -runmode=test
+
+##日志系统
+使用最流行的golang 日志框架logrus
+https://github.com/sirupsen/logrus
+
+##缓存
+缓存使用redigo
+
+##数据库 orm
+使用gorm
+https://github.com/jinzhu/gorm
+放弃beego orm 的理由 1，关联查询采用join语句，无法通过sql审核。2，不支持prepare，
+
+##依赖管理
+golang 官方依赖包管理工具
+https://github.com/golang/dep
+安装go get -u github.com/golang/dep/cmd/dep
+使用 dep ensure
+
+##golang 官方包下载方式
+以go get golang.org/x/net 为例，首先将golang.org/x 替换成 github.com/golang执行go get github.com/golang/net 命令
+get完成之后执行 cp -rf $GOPATH/src/github.com/golang/* $GOPATH/src/golang.org/x/
+原理为先下载官方包在github上的镜像包，然后复制到golang/x目录下
+
+##自动文档gin-swagger
+https://github.com/swaggo/gin-swagger
+安装swag 工具
+go get -u github.com/swaggo/swag/cmd/swag
+官方包安装参考上一条
+
+#todo gorm 关联查询sql语句测试
+#缓存使用
+#包复用测试
+#grpc测试
+#response封装
+#vendor dep优势
+#单元测试

@@ -7,6 +7,7 @@ import (
 	"github.com/Quons/go-gin-example/pkg/gredis"
 	"github.com/Quons/go-gin-example/service/cache_service"
 	"github.com/sirupsen/logrus"
+	"fmt"
 )
 
 type Article struct {
@@ -40,6 +41,42 @@ func (a *Article) Add() error {
 	}
 
 	return nil
+}
+
+func (a *Article) AddArticleAndTag() {
+	tx := models.WriteDB().Begin()
+	defer func() {
+		if s := recover(); s != nil {
+			logrus.Errorf("%v", s)
+			tx.Rollback()
+		}
+	}()
+	//添加文章
+	article := map[string]interface{}{
+		"tag_id":          a.TagID,
+		"title":           a.Title,
+		"desc":            a.Desc,
+		"content":         a.Content,
+		"created_by":      a.CreatedBy,
+		"cover_image_url": a.CoverImageUrl,
+		"state":           a.State,
+	}
+	if err := models.AddArticleTrans(tx, article); err != nil {
+		tx.Rollback()
+		fmt.Printf(err.Error())
+		return
+	}
+	//添加标签
+	if err := models.AddTagTrans(tx, "testTag", 1, "quons"); err != nil {
+		tx.Rollback()
+		fmt.Printf(err.Error())
+		return
+	}
+	if err := tx.Commit().Error; err != nil {
+		fmt.Printf(err.Error())
+		logrus.Errorf("%+v", err)
+	}
+
 }
 
 func (a *Article) Edit() error {
@@ -78,9 +115,9 @@ func (a *Article) Get() (*models.Article, error) {
 	return article, nil
 }
 
-func (a *Article) GetAll() ([]*models.Article, error) {
+func (a *Article) GetAll() (models.Articles, error) {
 	var (
-		articles, cacheArticles []*models.Article
+		articles, cacheArticles models.Articles
 	)
 
 	cache := cache_service.Article{

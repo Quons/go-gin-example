@@ -8,6 +8,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/Quons/go-gin-example/pkg/file"
 	"path/filepath"
+	"os"
 )
 
 type App struct {
@@ -36,7 +37,7 @@ var AppSetting = &App{}
 
 type Server struct {
 	RunMode      string
-	HttpPort     int
+	HttpPort     string
 	ReadTimeout  time.Duration
 	WriteTimeout time.Duration
 }
@@ -45,11 +46,14 @@ var ServerSetting = &Server{}
 
 type Database struct {
 	Type        string
-	User        string
-	Password    string
-	Host        string
 	Name        string
 	TablePrefix string
+	WUser       string
+	WPassword   string
+	WHost       string
+	RUser       string
+	RPassword   string
+	RHost       string
 }
 
 var DatabaseSetting = &Database{}
@@ -81,13 +85,18 @@ func Setup(runmode string) {
 		logrus.Fatal("invalid runmode,must be one of [dev,test,pre,prod]!")
 	}
 	//获取绝对路径
-	execPath, err := file.GetExecPath()
+	workPath, err := file.GetExecPath()
 	if err != nil {
 		logrus.Fatalf("get execPath error:%+v", err)
 	}
-	cfg, err = ini.Load(filepath.Join(execPath, "conf", configFile))
+	cfg, err = ini.Load(filepath.Join(workPath, "conf", configFile))
 	if err != nil {
-		log.Fatalf("Fail to parse config file: %v", err)
+		//根据goPath定位配置文件
+		goPath := os.Getenv("GOPATH")
+		cfg, err = ini.Load(filepath.Join(goPath, "src/github.com/Quons/go-gin-example", "conf", configFile))
+		if err != nil {
+			logrus.Fatalf("get execPath error:%+v", err)
+		}
 	}
 
 	mapTo("app", AppSetting)
