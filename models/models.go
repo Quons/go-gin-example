@@ -11,6 +11,7 @@ import (
 	"time"
 	"strings"
 	"math/rand"
+	"github.com/Quons/go-gin-example/pkg/logging"
 )
 
 var wdb *gorm.DB
@@ -39,7 +40,7 @@ func Setup() {
 		return setting.DatabaseSetting.TablePrefix + defaultTableName
 	}
 	wdb.LogMode(true)
-
+	wdb.SetLogger(log.New(logging.GetGinLogWriter(), "[GORM] ", log.Ldate))
 	wdb.SingularTable(true)
 	wdb.Callback().Create().Replace("gorm:update_time_stamp", updateTimeStampForCreateCallback)
 	wdb.Callback().Update().Replace("gorm:update_time_stamp", updateTimeStampForUpdateCallback)
@@ -63,6 +64,7 @@ func Setup() {
 			return setting.DatabaseSetting.TablePrefix + defaultTableName
 		}
 		rdb.LogMode(true)
+		rdb.SetLogger(log.New(logging.GetGinLogWriter(), "[GORM] ", log.Ldate))
 		rdb.SingularTable(true)
 		rdb.DB().SetMaxIdleConns(10)
 		rdb.DB().SetMaxOpenConns(100)

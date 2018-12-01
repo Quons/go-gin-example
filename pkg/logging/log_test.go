@@ -2,13 +2,9 @@ package logging
 
 import (
 	"testing"
-	"os"
-	"strings"
+	"fmt"
 )
 
 func TestOS(t *testing.T) {
-	execFile := os.Args[0]
-	lastIndex := strings.LastIndex(execFile, "/")
-	execFile = string([]rune(execFile)[lastIndex+1:])
-	t.Log(execFile)
+	t.Log(fmt.Sprintf("%c[1;%v;32m %s %c[0m", 0x1B, 43, "INFO", 0x1B))
 }

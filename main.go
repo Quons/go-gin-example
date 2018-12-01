@@ -29,11 +29,11 @@ func main() {
 	var runmode string
 	flag.StringVar(&runmode, "runmode", "dev", "runmode:dev,test,pre,prod;default dev mode")
 	flag.Parse()
-	logrus.Info("....." + runmode)
 
+	logrus.Info(fmt.Sprintf("%c[1;%v;32m %s %c[0m", 0x1B, 43, "INFO", 0x1B))
 	setting.Setup(runmode)
-	models.Setup()
 	logging.Setup()
+	models.Setup()
 	gredis.Setup()
 	logrus.Debug("...Debug log")
 	logrus.Info("...Info log")

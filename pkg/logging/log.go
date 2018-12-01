@@ -9,17 +9,23 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/rifflock/lfshook"
 	"github.com/Quons/go-gin-example/pkg/setting"
-	prefixed "github.com/x-cray/logrus-prefixed-formatter"
-
+	"bytes"
+	"strconv"
+	"fmt"
+	"github.com/gin-gonic/gin/json"
 )
+
+var logPath string
+var dirName string
 
 func Setup() {
 	//获取执行目录
-	logPath, err := file.MkRdir("log")
+	var err error
+	logPath, err = file.MkRdir("log")
 	if err != nil {
 		logrus.Fatal("get log path error")
 	}
-	dirName, err := file.GetDirName()
+	dirName, err = file.GetDirName()
 	if err != nil {
 		logrus.Fatal("get dirName error")
 	}
@@ -32,15 +38,7 @@ func Setup() {
 	//打印行号，funcName
 	logrus.SetReportCaller(true)
 	//输出设置
-	writer, err := rotatelogs.New(
-		filepath.Join(logPath, dirName+".%Y%m%d%H%M"),
-		rotatelogs.WithLinkName(filepath.Join(logPath, dirName+".log")), // 生成软链，指向最新日志文件
-		rotatelogs.WithMaxAge(10*time.Hour*24),                          // 文件最大保存时间
-		rotatelogs.WithRotationTime(time.Hour*24),                       // 日志切割时间间隔
-	)
-	if err != nil {
-		logrus.Fatalf("config local file system logger error.%+v", errors.WithStack(err))
-	}
+	writer := GetLogrusWriter()
 	//设置local file system hook
 	lfsHook := lfshook.NewHook(lfshook.WriterMap{
 		logrus.DebugLevel: writer,
@@ -49,15 +47,87 @@ func Setup() {
 		logrus.ErrorLevel: writer,
 		logrus.FatalLevel: writer,
 		logrus.PanicLevel: writer,
-	}, &logrus.TextFormatter{
-		//是否显示颜色
-		ForceColors: true,
-		//输出字段排序设置
-		DisableSorting: true,
-		//设置日志格式
-		TimestampFormat: "2006-01-02 15:04:05",
-	})
-	logrus.SetFormatter(prefixed.TextFormatter{})
+	}, &CodeFormatter{})
 	//添加hook
 	logrus.AddHook(lfsHook)
+}
+
+//定义formatter ,实现logrus formatter接口
+type CodeFormatter struct{}
+
+func (f *CodeFormatter) Format(entry *logrus.Entry) ([]byte, error) {
+	var b *bytes.Buffer
+	if entry.Buffer != nil {
+		b = entry.Buffer
+	} else {
+		b = &bytes.Buffer{}
+	}
+	execPath, _ := file.GetExecPath()
+	execFile := string([]rune(entry.Caller.File)[len(execPath)+1:])
+
+	b.WriteString(entry.Time.Format("2006-01-02 15:04:05"))
+	b.WriteString(" [")
+	b.WriteString(entry.Level.String())
+	b.WriteString("] ")
+	b.WriteString(fmt.Sprintf("%s:%v ", execFile, strconv.Itoa(entry.Caller.Line)))
+
+	if len(entry.Data) != 0 {
+		b.WriteString("param:")
+		data, _ := json.Marshal(entry.Data)
+		b.WriteString(fmt.Sprintf("%+v ", string(data)))
+	}
+
+	b.WriteString("msg:")
+	b.WriteString(entry.Message)
+	b.WriteByte('\n')
+	return b.Bytes(), nil
+}
+
+func GetLogrusWriter() *rotatelogs.RotateLogs {
+	logrusPath, err := file.MkRdir("log/" + dirName)
+	if err != nil {
+		logrus.Fatal("get log path error")
+	}
+	writer, err := rotatelogs.New(
+		filepath.Join(logrusPath, dirName+".%Y%m%d%H%M"),
+		rotatelogs.WithLinkName(filepath.Join(logPath, dirName+".log")), // 生成软链，指向最新日志文件
+		rotatelogs.WithMaxAge(10*time.Hour*24),                          // 文件最大保存时间
+		rotatelogs.WithRotationTime(time.Hour*24),                       // 日志切割时间间隔
+	)
+	if err != nil {
+		logrus.Fatalf("config local file system logger error.%+v", errors.WithStack(err))
+	}
+	return writer
+}
+
+//获取gin日志writer
+func GetGinLogWriter() *rotatelogs.RotateLogs {
+	ginLogPath, err := file.MkRdir("log/gin")
+	if err != nil {
+		logrus.Fatal("get log path error")
+	}
+	writer, err := rotatelogs.New(
+		filepath.Join(ginLogPath, "gin.%Y%m%d%H%M"),
+		rotatelogs.WithLinkName(filepath.Join(logPath, "gin.log")), // 生成软链，指向最新日志文件
+		rotatelogs.WithMaxAge(10*time.Hour*24),                     // 文件最大保存时间
+		rotatelogs.WithRotationTime(time.Hour*24),                  // 日志切割时间间隔
+	)
+	if err != nil {
+		logrus.Fatalf("config local file system logger error.%+v", errors.WithStack(err))
+	}
+	return writer
+}
+
+//获取gorm日志writer
+func GetGormLogWriter() *rotatelogs.RotateLogs {
+	writer, err := rotatelogs.New(
+		filepath.Join(logPath, "gorm.%Y%m%d%H%M"),
+		rotatelogs.WithLinkName(filepath.Join(logPath, "gorm.log")), // 生成软链，指向最新日志文件
+		rotatelogs.WithMaxAge(10*time.Hour*24),                      // 文件最大保存时间
+		rotatelogs.WithRotationTime(time.Hour*24),                   // 日志切割时间间隔
+	)
+	if err != nil {
+		logrus.Fatalf("config local file system logger error.%+v", errors.WithStack(err))
+	}
+	return writer
 }

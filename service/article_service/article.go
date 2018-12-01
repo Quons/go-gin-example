@@ -44,6 +44,10 @@ func (a *Article) Add() error {
 }
 
 func (a *Article) AddArticleAndTag() {
+	logrus.WithFields(logrus.Fields{
+		"name": "quon",
+		"age":  25,
+	}).Info("start transaction！！")
 	tx := models.WriteDB().Begin()
 	defer func() {
 		if s := recover(); s != nil {
@@ -66,6 +70,7 @@ func (a *Article) AddArticleAndTag() {
 		fmt.Printf(err.Error())
 		return
 	}
+	panic("fdfdfdf")
 	//添加标签
 	if err := models.AddTagTrans(tx, "testTag", 1, "quons"); err != nil {
 		tx.Rollback()

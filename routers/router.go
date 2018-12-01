@@ -19,6 +19,8 @@ import (
 	"os"
 	"os/signal"
 	"context"
+	"log"
+	"github.com/Quons/go-gin-example/pkg/logging"
 )
 
 /*路由注册*/
@@ -67,9 +69,9 @@ func registerRouter(r *gin.Engine) {
 
 func InitRouter() *gin.Engine {
 	gin.SetMode(setting.ServerSetting.RunMode)
-	r := gin.Default()
-	r.Use(gin.Logger())
-	r.Use(gin.Recovery())
+	r := gin.New()
+	r.Use(gin.LoggerWithWriter(logging.GetGinLogWriter()))
+	r.Use(gin.RecoveryWithWriter(logging.GetGinLogWriter()))
 	//静态目录
 	r.StaticFS("/export", http.Dir(export.GetExcelFullPath()))
 	r.StaticFS("/upload/images", http.Dir(upload.GetImageFullPath()))
@@ -78,8 +80,9 @@ func InitRouter() *gin.Engine {
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	registerRouter(r)
 	srv := &http.Server{
-		Addr:    ":" + setting.ServerSetting.HttpPort,
-		Handler: r,
+		Addr:     ":" + setting.ServerSetting.HttpPort,
+		Handler:  r,
+		ErrorLog: log.New(logging.GetLogrusWriter(), "server err:", log.Llongfile|log.Ldate|log.Ltime),
 	}
 	go func() {
 		// service connections
