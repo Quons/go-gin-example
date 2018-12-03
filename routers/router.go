@@ -21,6 +21,7 @@ import (
 	"context"
 	"log"
 	"github.com/Quons/go-gin-example/pkg/logging"
+	"github.com/gin-contrib/cors"
 )
 
 /*路由注册*/
@@ -70,15 +71,28 @@ func registerRouter(r *gin.Engine) {
 func InitRouter() *gin.Engine {
 	gin.SetMode(setting.ServerSetting.RunMode)
 	r := gin.New()
+	//设置gin日志输出writer
 	r.Use(gin.LoggerWithWriter(logging.GetGinLogWriter()))
+	//设置gin恢复日志数据writer
 	r.Use(gin.RecoveryWithWriter(logging.GetGinLogWriter()))
+	//跨域请求设置
+	config := cors.Config{
+		AllowAllOrigins:  true,
+		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Authorization", "Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Content-Type"},
+		ExposeHeaders:    []string{"Content-Length", "Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Content-Type"},
+		AllowCredentials: true,
+	}
+	r.Use(cors.New(config))
 	//静态目录
 	r.StaticFS("/export", http.Dir(export.GetExcelFullPath()))
 	r.StaticFS("/upload/images", http.Dir(upload.GetImageFullPath()))
 	r.StaticFS("/qrcode", http.Dir(qrcode.GetQrCodeFullPath()))
 	//swagger自动文档路径
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	//注册业务路由
 	registerRouter(r)
+	//服务器设置
 	srv := &http.Server{
 		Addr:     ":" + setting.ServerSetting.HttpPort,
 		Handler:  r,

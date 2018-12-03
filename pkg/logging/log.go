@@ -36,7 +36,7 @@ func Setup() {
 	}
 	logrus.SetLevel(logLevel)
 	//打印行号，funcName
-	logrus.SetReportCaller(true)
+	//logrus.SetReportCaller(true)
 	//输出设置
 	writer := GetLogrusWriter()
 	//设置local file system hook
@@ -62,14 +62,18 @@ func (f *CodeFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	} else {
 		b = &bytes.Buffer{}
 	}
-	execPath, _ := file.GetExecPath()
-	execFile := string([]rune(entry.Caller.File)[len(execPath)+1:])
+	fileLineNum := ""
+	if entry.Caller != nil {
+		execPath, _ := file.GetExecPath()
+		fileLineNum = string([]rune(entry.Caller.File)[len(execPath)+1:])
+		fileLineNum = fmt.Sprintf("%s:%v ", fileLineNum, strconv.Itoa(entry.Caller.Line))
+	}
 
 	b.WriteString(entry.Time.Format("2006-01-02 15:04:05"))
 	b.WriteString(" [")
 	b.WriteString(entry.Level.String())
 	b.WriteString("] ")
-	b.WriteString(fmt.Sprintf("%s:%v ", execFile, strconv.Itoa(entry.Caller.Line)))
+	b.WriteString(fileLineNum)
 
 	if len(entry.Data) != 0 {
 		b.WriteString("param:")
