@@ -177,8 +177,6 @@ func toQueryValues(values [][]interface{}) (results []interface{}) {
 func fileWithLineNum() string {
 	for i := 2; i < 15; i++ {
 		_, file, line, ok := runtime.Caller(i)
-		index := strings.LastIndex(file, "/")
-		file = string([]rune(file)[index+1:])
 		if ok && (!goSrcRegexp.MatchString(file) || goTestRegexp.MatchString(file)) {
 			return fmt.Sprintf("%v:%v", file, line)
 		}
