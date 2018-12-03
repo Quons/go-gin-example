@@ -27,6 +27,10 @@ paths:
         in: query
         name: tag_id
         type: integer
+      - description: Token
+        in: query
+        name: token
+        type: string
       - description: State
         in: query
         name: state
@@ -243,9 +247,8 @@ paths:
       - application/json
       responses:
         "200":
-          description: '{"code":200,"data":{"image_save_url":"upload/images/96a.jpg",
-            "image_url": "http://..."}'
+          description: '{"code":200,"data":null,"msg":"ok"}'
           schema:
             type: string
-      summary: 上传图片
+      summary: 导入文章标签
 swagger: "2.0"

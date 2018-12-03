@@ -1,14 +1,17 @@
 package gredis
 
 import (
-	"encoding/json"
 	"time"
-
+	"bytes"
 	"github.com/gomodule/redigo/redis"
-
+	"encoding/gob"
 	"github.com/Quons/go-gin-example/pkg/setting"
+	"github.com/sirupsen/logrus"
+	"fmt"
 )
 
+//key前缀，防止key冲突
+var globalPrefix = "gin_"
 var RedisConn *redis.Pool
 
 func Setup() error {
@@ -37,21 +40,22 @@ func Setup() error {
 	return nil
 }
 
-func Set(key string, data interface{}, time int) error {
+//expire 单位为秒
+func Set(data interface{}, expire int, prefix string, keyValue ...interface{}) error {
 	conn := RedisConn.Get()
 	defer conn.Close()
-
-	value, err := json.Marshal(data)
+	encodeData, err := Encode(data)
+	if err != nil {
+		logrus.Error(err)
+		return err
+	}
+	key := getCacheKey(prefix, keyValue)
+	_, err = conn.Do("SET", key, encodeData)
 	if err != nil {
 		return err
 	}
 
-	_, err = conn.Do("SET", key, value)
-	if err != nil {
-		return err
-	}
-
-	_, err = conn.Do("EXPIRE", key, time)
+	_, err = conn.Do("EXPIRE", key, expire)
 	if err != nil {
 		return err
 	}
@@ -71,16 +75,24 @@ func Exists(key string) bool {
 	return exists
 }
 
-func Get(key string) ([]byte, error) {
+func Get(to interface{}, prefix string, keyValue ...interface{}) (bool) {
 	conn := RedisConn.Get()
 	defer conn.Close()
-
+		key := getCacheKey(prefix, keyValue)
+	exist := Exists(key)
+	if !exist {
+		return false
+	}
 	reply, err := redis.Bytes(conn.Do("GET", key))
 	if err != nil {
-		return nil, err
+		logrus.Error(err)
+		return false
 	}
-
-	return reply, nil
+	if err = Decode(reply, to); err != nil {
+		logrus.Error(err)
+		return false
+	}
+	return true
 }
 
 func Delete(key string) (bool, error) {
@@ -107,4 +119,37 @@ func LikeDeletes(key string) error {
 	}
 
 	return nil
+}
+
+/*拼接缓存key*/
+func getCacheKey(prefix string, keyValue ...interface{}) string {
+	key := prefix
+	for _, v := range keyValue {
+		key = fmt.Sprintf(key+"%v", v)
+	}
+	return key
+}
+
+// --------------------
+// Encode
+// 用gob进行数据编码
+//
+func Encode(data interface{}) ([]byte, error) {
+	buf := bytes.NewBuffer(nil)
+	enc := gob.NewEncoder(buf)
+	err := enc.Encode(data)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+// -------------------
+// Decode
+// 用gob进行数据解码
+//
+func Decode(data []byte, to interface{}) error {
+	buf := bytes.NewBuffer(data)
+	dec := gob.NewDecoder(buf)
+	return dec.Decode(to)
 }

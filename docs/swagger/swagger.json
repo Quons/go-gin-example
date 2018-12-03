@@ -44,6 +44,12 @@
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "description": "Token",
+                        "name": "token",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
                         "description": "State",
                         "name": "state",
@@ -304,13 +310,13 @@
                 "produces": [
                     "application/json"
                 ],
-                "summary": "上传图片",
+                "summary": "导入文章标签",
                 "parameters": [
                     {}
                 ],
                 "responses": {
                     "200": {
-                        "description": "{\"code\":200,\"data\":{\"image_save_url\":\"upload/images/96a.jpg\", \"image_url\": \"http://...\"}",
+                        "description": "{\"code\":200,\"data\":null,\"msg\":\"ok\"}",
                         "schema": {
                             "type": "string"
                         }

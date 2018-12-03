@@ -1,7 +1,6 @@
 package tag_service
 
 import (
-	"encoding/json"
 	"io"
 	"strconv"
 	"time"
@@ -12,8 +11,7 @@ import (
 	"github.com/Quons/go-gin-example/models"
 	"github.com/Quons/go-gin-example/pkg/export"
 	"github.com/Quons/go-gin-example/pkg/gredis"
-	"github.com/Quons/go-gin-example/service/cache_service"
-	"github.com/sirupsen/logrus"
+	"github.com/Quons/go-gin-example/pkg/e"
 )
 
 type Tag struct {
@@ -59,33 +57,17 @@ func (t *Tag) Count() (int, error) {
 }
 
 func (t *Tag) GetAll() ([]models.Tag, error) {
-	var (
-		tags, cacheTags []models.Tag
-	)
+	var tags []models.Tag
 
-	cache := cache_service.Tag{
-		State: t.State,
-
-		PageNum:  t.PageNum,
-		PageSize: t.PageSize,
-	}
-	key := cache.GetTagsKey()
-	if gredis.Exists(key) {
-		data, err := gredis.Get(key)
-		if err != nil {
-			logrus.Info(err)
-		} else {
-			json.Unmarshal(data, &cacheTags)
-			return cacheTags, nil
-		}
+	if gredis.Get(&tags, e.CACHE_TAG, t.State, t.PageNum, t.PageSize) {
+		return tags, nil
 	}
 
 	tags, err := models.GetTags(t.PageNum, t.PageSize, t.getMaps())
 	if err != nil {
 		return nil, err
 	}
-
-	gredis.Set(key, tags, 3600)
+	gredis.Set(tags, e.CACHE_TAG_TIME, e.CACHE_TAG, t.State, t.PageNum, t.PageSize)
 	return tags, nil
 }
 

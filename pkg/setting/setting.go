@@ -68,6 +68,17 @@ type Redis struct {
 
 var RedisSetting = &Redis{}
 
+type UserCenterSetting struct {
+	ConfigUrl1             string `json:"getConfigUrl1"`
+	ConfigUrl2             string `json:"getConfigUrl2"`
+	GetStudentByTokenUrl   string `json:"getStudentByTokenUrl"`
+	GetTokenByStudentIdUrl string `json:"getTokenByStudentIdUrl"`
+	WechatCreateStudentUrl string `json:"wechatCreateStudentUrl"`
+	WechatLoginUrl         string `json:"wechatLoginUrl"`
+}
+
+var UserCenter = &UserCenterSetting{}
+
 var cfg *ini.File
 
 func Setup(runmode string) {
@@ -103,6 +114,7 @@ func Setup(runmode string) {
 	mapTo("server", ServerSetting)
 	mapTo("database", DatabaseSetting)
 	mapTo("redis", RedisSetting)
+	mapTo("userCenter", UserCenter)
 
 	AppSetting.ImageMaxSize = AppSetting.ImageMaxSize * 1024 * 1024
 	ServerSetting.ReadTimeout = ServerSetting.ReadTimeout * time.Second
