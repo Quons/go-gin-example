@@ -1,18 +1,18 @@
 package logging
 
 import (
-	"github.com/Quons/go-gin-example/pkg/file"
-	"github.com/pkg/errors"
-	"time"
-	"path/filepath"
-	"github.com/lestrrat/go-file-rotatelogs"
-	"github.com/sirupsen/logrus"
-	"github.com/rifflock/lfshook"
-	"github.com/Quons/go-gin-example/pkg/setting"
 	"bytes"
-	"strconv"
 	"fmt"
+	"github.com/Quons/go-gin-example/pkg/file"
+	"github.com/Quons/go-gin-example/pkg/setting"
 	"github.com/gin-gonic/gin/json"
+	"github.com/lestrrat/go-file-rotatelogs"
+	"github.com/pkg/errors"
+	"github.com/rifflock/lfshook"
+	"github.com/sirupsen/logrus"
+	"path/filepath"
+	"strconv"
+	"time"
 )
 
 var logPath string

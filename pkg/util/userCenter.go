@@ -2,13 +2,13 @@ package util
 
 import (
 	"encoding/json"
-	"github.com/Quons/go-gin-example/pkg/gredis"
 	"github.com/Quons/go-gin-example/pkg/e"
+	"github.com/Quons/go-gin-example/pkg/gredis"
 	"github.com/Quons/go-gin-example/pkg/setting"
-	log "github.com/sirupsen/logrus"
 	"github.com/pkg/errors"
-	"strings"
+	log "github.com/sirupsen/logrus"
 	"strconv"
+	"strings"
 )
 
 // 获取配置中心的配置
@@ -159,7 +159,7 @@ func CreateStudentFromUserCenter(registerStudent RegisterStudent) (ApiStudent, e
 	postData2["clientSource"] = registerStudent.ClientSource
 	postData2["version"] = registerStudent.Version
 	postData2["channel "] = registerStudent.Channel
-	reqUrl := strings.Replace(setting.UserCenter.WechatCreateStudentUrl, "{ip}", userCenterIp, 1)
+	reqUrl := strings.Replace(setting.UserCenter.WeChatCreateStudentUrl, "{ip}", userCenterIp, 1)
 	tokenInfo, err := HttpPost(reqUrl, postData2)
 	if err != nil {
 		log.WithFields(log.Fields{"userCententIp": userCenterIp, "postData": postData2}).Error(err)
@@ -207,7 +207,7 @@ func GetApiStudentByUnionId(unionId string) (ApiStudent, error) {
 	}
 	var postData3 = make(map[string]string)
 	postData3["unionid"] = unionId
-	reqUrl := strings.Replace(setting.UserCenter.WechatLoginUrl, "{ip}", userCenterIp, 1)
+	reqUrl := strings.Replace(setting.UserCenter.WeChatLoginUrl, "{ip}", userCenterIp, 1)
 	tokenInfo, err := HttpPost(reqUrl, postData3)
 	if err != nil {
 		log.WithFields(log.Fields{"reqUrl": reqUrl, "postData": postData3}).Error(err)

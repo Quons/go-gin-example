@@ -1,8 +1,8 @@
 package file
 
 import (
-	"testing"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestGetExecPath(t *testing.T) {

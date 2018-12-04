@@ -2,11 +2,11 @@ package e
 
 const (
 	//用户中心相关缓存
-	CACHE_USER_CENTER_IP          = "userCenterIp"
-	CACHE_USER_CENTER_IP_TIME     = 300
-	CACHE_USER_CENTER_CONF        = "userCenterConfig"
-	CACHE_USER_CENTER_CONF_TIME   = 300
-	CACHE_USER_CENTER_CONF_FLAG = "UserCenterConfigFlag"
+	CACHE_USER_CENTER_IP             = "userCenterIp"
+	CACHE_USER_CENTER_IP_TIME        = 300
+	CACHE_USER_CENTER_CONF           = "userCenterConfig"
+	CACHE_USER_CENTER_CONF_TIME      = 300
+	CACHE_USER_CENTER_CONF_FLAG      = "UserCenterConfigFlag"
 	CACHE_USER_CENTER_CONF_FLAG_TIME = 300
 
 	CACHE_ARTICLE      = "ARTICLE"

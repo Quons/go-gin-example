@@ -1,11 +1,11 @@
 package middleware
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/Quons/go-gin-example/pkg/e"
-	"net/http"
 	"github.com/Quons/go-gin-example/pkg/util"
+	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"net/http"
 )
 
 func CheckToken() gin.HandlerFunc {

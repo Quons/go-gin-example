@@ -6,22 +6,18 @@ import (
 	"github.com/gin-gonic/gin"
 	//启用swagger文档
 	_ "github.com/Quons/go-gin-example/docs"
-	"github.com/swaggo/gin-swagger"
-	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"github.com/Quons/go-gin-example/pkg/export"
+	"github.com/Quons/go-gin-example/pkg/logging"
 	"github.com/Quons/go-gin-example/pkg/qrcode"
 	"github.com/Quons/go-gin-example/pkg/setting"
 	"github.com/Quons/go-gin-example/pkg/upload"
 	"github.com/Quons/go-gin-example/routers/api"
 	"github.com/Quons/go-gin-example/routers/api/v1"
-	"time"
 	"github.com/sirupsen/logrus"
-	"os"
-	"os/signal"
-	"context"
-	"log"
-	"github.com/Quons/go-gin-example/pkg/logging"
-	"github.com/gin-contrib/cors"
+	"github.com/swaggo/gin-swagger"
+	"github.com/swaggo/gin-swagger/swaggerFiles"
+	"time"
+
 	"github.com/Quons/go-gin-example/middleware"
 )
 
@@ -67,7 +63,6 @@ func registerRouter(r *gin.Engine) {
 		//生成文章海报
 		apiv1.POST("/articles/poster/generate", v1.GenerateArticlePoster)
 	}
-
 }
 
 func InitRouter() *gin.Engine {
@@ -78,16 +73,6 @@ func InitRouter() *gin.Engine {
 	//设置gin恢复日志数据writer
 	r.Use(gin.RecoveryWithWriter(logging.GetGinLogWriter()))
 
-	//跨域请求设置
-	corsConfig := cors.Config{
-		AllowAllOrigins:  true,
-		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Authorization", "Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Content-Type"},
-		ExposeHeaders:    []string{"Content-Length", "Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Content-Type"},
-		AllowCredentials: true,
-	}
-	r.Use(cors.New(corsConfig))
-
 	//静态目录
 	r.StaticFS("/export", http.Dir(export.GetExcelFullPath()))
 	r.StaticFS("/upload/images", http.Dir(upload.GetImageFullPath()))
@@ -97,30 +82,5 @@ func InitRouter() *gin.Engine {
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	//注册业务路由
 	registerRouter(r)
-
-	//服务器设置
-	srv := &http.Server{
-		Addr:     ":" + setting.ServerSetting.HttpPort,
-		Handler:  r,
-		ErrorLog: log.New(logging.GetLogrusWriter(), "server err:", log.LstdFlags),
-	}
-	go func() {
-		// service connections
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			logrus.Fatalf("listen: %s\n", err)
-		}
-	}()
-
-	//Wait for interrupt signal to gracefully shutdown the server with a timeout of 5 seconds.
-	quit := make(chan os.Signal)
-	signal.Notify(quit, os.Interrupt)
-	<-quit
-	logrus.Println("Shutdown Server ...")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	if err := srv.Shutdown(ctx); err != nil {
-		logrus.Fatal("Server Shutdown:", err)
-	}
-	logrus.Println("Server exiting")
 	return r
 }

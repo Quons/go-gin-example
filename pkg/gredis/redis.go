@@ -1,17 +1,17 @@
 package gredis
 
 import (
-	"time"
 	"bytes"
-	"github.com/gomodule/redigo/redis"
 	"encoding/gob"
-	"github.com/Quons/go-gin-example/pkg/setting"
-	"github.com/sirupsen/logrus"
 	"fmt"
+	"github.com/Quons/go-gin-example/pkg/setting"
+	"github.com/gomodule/redigo/redis"
+	"github.com/sirupsen/logrus"
+	"time"
 )
 
 //key前缀，防止key冲突
-var globalPrefix = "gin_"
+var globalPrefix = setting.RedisSetting.Prefix
 var RedisConn *redis.Pool
 
 func Setup() error {
@@ -40,7 +40,7 @@ func Setup() error {
 	return nil
 }
 
-//expire 单位为秒
+//添加缓存方法。注意参数顺序：缓存对象，过期时间（单位为秒）,key前缀，key值数组
 func Set(data interface{}, expire int, prefix string, keyValue ...interface{}) error {
 	conn := RedisConn.Get()
 	defer conn.Close()
@@ -63,10 +63,11 @@ func Set(data interface{}, expire int, prefix string, keyValue ...interface{}) e
 	return nil
 }
 
-func Exists(key string) bool {
+/*判断key是否存在方法，存在返回true，不存在返回false*/
+func Exists(prefix string, keyValue ...interface{}) bool {
 	conn := RedisConn.Get()
 	defer conn.Close()
-
+	key := getCacheKey(prefix, keyValue)
 	exists, err := redis.Bool(conn.Do("EXISTS", key))
 	if err != nil {
 		return false
@@ -75,10 +76,11 @@ func Exists(key string) bool {
 	return exists
 }
 
-func Get(to interface{}, prefix string, keyValue ...interface{}) (bool) {
+//获取key方法，存在返回true，否则返回false。注意参数顺序：接受对象，key前缀，key值数组
+func Get(to interface{}, prefix string, keyValue ...interface{}) bool {
 	conn := RedisConn.Get()
 	defer conn.Close()
-		key := getCacheKey(prefix, keyValue)
+	key := getCacheKey(prefix, keyValue)
 	exist := Exists(key)
 	if !exist {
 		return false
@@ -95,13 +97,15 @@ func Get(to interface{}, prefix string, keyValue ...interface{}) (bool) {
 	return true
 }
 
-func Delete(key string) (bool, error) {
+/*删除key方法*/
+func Delete(prefix string, keyValue ...interface{}) (bool, error) {
 	conn := RedisConn.Get()
 	defer conn.Close()
-
+	key := getCacheKey(prefix, keyValue)
 	return redis.Bool(conn.Do("DEL", key))
 }
 
+/*关键字删除key方法*/
 func LikeDeletes(key string) error {
 	conn := RedisConn.Get()
 	defer conn.Close()
@@ -125,7 +129,7 @@ func LikeDeletes(key string) error {
 func getCacheKey(prefix string, keyValue ...interface{}) string {
 	key := prefix
 	for _, v := range keyValue {
-		key = fmt.Sprintf(key+"%v", v)
+		key = fmt.Sprintf(globalPrefix+key+"%v", v)
 	}
 	return key
 }

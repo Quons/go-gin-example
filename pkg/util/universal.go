@@ -82,7 +82,7 @@ func GetUniversalCode() string {
 	code := int(time.Now().Month()) * time.Now().Day() * 1024
 	var r = []rune(strconv.Itoa(code))
 	length := len(r)
-	return string(r[length-4: length])
+	return string(r[length-4 : length])
 }
 
 // 8位随机密码

@@ -1,11 +1,11 @@
 package article_service
 
 import (
+	"fmt"
 	"github.com/Quons/go-gin-example/models"
+	. "github.com/Quons/go-gin-example/pkg/e"
 	"github.com/Quons/go-gin-example/pkg/gredis"
 	"github.com/sirupsen/logrus"
-	"fmt"
-	. "github.com/Quons/go-gin-example/pkg/e"
 )
 
 type Article struct {

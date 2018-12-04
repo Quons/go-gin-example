@@ -1,8 +1,8 @@
 package logging
 
 import (
-	"testing"
 	"fmt"
+	"testing"
 )
 
 func TestOS(t *testing.T) {

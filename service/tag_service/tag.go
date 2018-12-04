@@ -9,9 +9,9 @@ import (
 	"github.com/tealeg/xlsx"
 
 	"github.com/Quons/go-gin-example/models"
+	"github.com/Quons/go-gin-example/pkg/e"
 	"github.com/Quons/go-gin-example/pkg/export"
 	"github.com/Quons/go-gin-example/pkg/gredis"
-	"github.com/Quons/go-gin-example/pkg/e"
 )
 
 type Tag struct {

@@ -1,8 +1,8 @@
 package util
 
 import (
-	"testing"
 	"encoding/json"
+	"testing"
 )
 
 type User struct {

@@ -1,11 +1,11 @@
 package app
 
 import (
-	"net/http"
-	"github.com/gin-gonic/gin"
-	"github.com/astaxie/beego/validation"
 	"github.com/Quons/go-gin-example/pkg/e"
+	"github.com/astaxie/beego/validation"
+	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"net/http"
 )
 
 func BindAndValid(c *gin.Context, form interface{}) (int, int) {

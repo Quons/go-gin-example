@@ -2,14 +2,14 @@ package file
 
 import (
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"mime/multipart"
 	"os"
+	"os/exec"
 	"path"
 	"path/filepath"
-	"os/exec"
 	"strings"
-	"github.com/sirupsen/logrus"
 )
 
 func GetSize(f multipart.File) (int, error) {
@@ -94,8 +94,6 @@ func GetExecPath() (string, error) {
 		return "", err
 	}
 	path2, err := filepath.Abs(execFile)
-	fmt.Println(path2)
-	fmt.Println(execFile)
 	if err != nil {
 		return "", err
 	}
