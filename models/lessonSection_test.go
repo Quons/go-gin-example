@@ -32,17 +32,17 @@ func TestExistLessonSectionByID(t *testing.T) {
 }
 
 func TestGetLessonSectionTotal(t *testing.T) {
-	c, err := GetLessonSectionTotal(map[string]interface{}{"status": 1})
+	c, err := GetLessonSectionTotal(map[string]interface{}{})
 	if err != nil {
 		t.Error(err)
 		return
 	}
 	t.Logf("%+v", c)
-	assert.Equal(t, 10, c)
+	assert.Equal(t, 44, c)
 }
 
 func TestGetLessonSections(t *testing.T) {
-	LessonSections, err := GetLessonSections(0, 11, map[string]interface{}{"status": 1})
+	LessonSections, err := GetLessonSections(0, 11, map[string]interface{}{})
 	if err != nil {
 		t.Error(err)
 		return
@@ -50,7 +50,7 @@ func TestGetLessonSections(t *testing.T) {
 	for _, LessonSection := range LessonSections {
 		t.Logf("%+v", LessonSection)
 	}
-	assert.Equal(t, 10, len(LessonSections))
+	assert.Equal(t, 11, len(LessonSections))
 }
 
 func TestAddLessonSection(t *testing.T) {
