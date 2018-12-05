@@ -7,11 +7,17 @@ build:
 	swag init
 	@go build -v .
 
-run:
+dev:
     # @关闭回声
 	swag init
 	@go build -v .
 	./go-gin-example
+
+run:
+    # @关闭回声
+	swag init
+	@go build -v .
+	sudo systemctl restart
 
 tool:
 	go vet ./...; true
