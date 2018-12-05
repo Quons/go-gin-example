@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
+	"github.com/Quons/go-gin-example/models"
 )
 
 func CheckToken() gin.HandlerFunc {
@@ -36,7 +37,18 @@ func CheckToken() gin.HandlerFunc {
 				c.Abort()
 				return
 			}
-			c.Set(e.PARAM_STUDENT_ID, apiStudent.Data.StudentId)
+			studentInfo, err := models.GetStudent(apiStudent.Data.StudentId)
+			if err != nil || studentInfo.StudentID == 0 {
+				logrus.WithField("token", token).Error(err)
+				c.JSON(http.StatusUnauthorized, gin.H{
+					"code": e.ERROR_TOKEN_EXPIRE,
+					"msg":  e.GetMsg(e.ERROR_TOKEN_EXPIRE),
+					"data": data,
+				})
+				c.Abort()
+				return
+			}
+			c.Set(e.PARAM_STUDENT_INFO, studentInfo)
 		}
 		c.Next()
 	}

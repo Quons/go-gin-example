@@ -30,13 +30,8 @@ func GetCourse(c *gin.Context) {
 		return
 	}
 	//获取studentId
-	studentId := c.GetInt64(e.PARAM_STUDENT_ID)
-	studentInfo, err := models.GetStudent(studentId)
-	if err != nil {
-		log.WithField("studentId", studentId).Error(err)
-		appG.Response(nil, e.ERROR_SERVER_ERROR)
-		return
-	}
+	studentInfo := c.MustGet(e.PARAM_STUDENT_INFO).(models.Student)
+
 	log.WithField("studentInfo", studentInfo).Info()
 	courseDO, err := course.Get()
 	if err != nil {
