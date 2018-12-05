@@ -28,8 +28,8 @@ func GetCourse(c *gin.Context) {
 		appG.Response(nil, e.ERROR_INVALID_PARAMS)
 		return
 	}
-	studentId, _ := c.Get("studentId")
-	logrus.WithField("studentId", studentId).Info()
+	studentId := c.GetInt64("studentId")
+	logrus.WithField("studentId", studentId)
 	courseDO, err := course.Get()
 	if err != nil {
 		appG.Response(nil, e.ERROR_SERVER_ERROR)
