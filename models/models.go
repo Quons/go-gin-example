@@ -9,10 +9,10 @@ import (
 
 	"github.com/Quons/go-gin-example/pkg/logging"
 	"github.com/Quons/go-gin-example/pkg/setting"
+	"github.com/sirupsen/logrus"
 	"math/rand"
 	"strings"
 	"time"
-	"github.com/sirupsen/logrus"
 )
 
 var wdb *gorm.DB

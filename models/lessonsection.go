@@ -7,19 +7,19 @@ import (
 )
 
 type Lessonsection struct {
-	SectionId int64  `gorm:"primary_key;column:sectionId"`
-	LessonId  int64  `gorm:"column:lessonId"`
+	SectionID int64  `gorm:"primary_key;column:sectionId"`
+	LessonID  int64  `gorm:"column:lessonId"`
 	Lesson    Lesson `gorm:"ForeignKey:lessonId"`
 	//关联查询，以ForeignKey作为外键 从Course表中以AssociationForeignKey 为references进行查询
 	Course             Course    `gorm:"ForeignKey:courseId"`
-	CourseId           int64     `gorm:"column:courseId"`
+	CourseID           int64     `gorm:"column:courseId"`
 	SectionNum         int       `gorm:"column:sectionNum"`
 	Brief              string    `gorm:"column:brief"`
 	SectionName        string    `gorm:"column:sectionName"`
-	VideoUrl           string    `gorm:"column:videoUrl"`
+	VideoURL           string    `gorm:"column:videoUrl"`
 	VideoTimes         int       `gorm:"column:videoTimes"`
 	Courseware         string    `gorm:"column:courseware"`
-	ParentId           int64     `gorm:"column:parentId"`
+	ParentID           int64     `gorm:"column:parentId"`
 	AddTime            time.Time `gorm:"column:addTime"`
 	AnswerFile         string    `gorm:"column:answerFile"`
 	WorksCover         string    `gorm:"column:worksCover"`
@@ -39,7 +39,7 @@ func ExistLessonSectionByID(id int64) (bool, error) {
 		return false, err
 	}
 
-	if lessonSection.SectionId > 0 {
+	if lessonSection.SectionID > 0 {
 		return true, nil
 	}
 
@@ -64,7 +64,7 @@ func GetLessonSections(pageNum int, pageSize int, maps interface{}) ([]Lessonsec
 }
 
 func GetLessonSection(id int64) (*Lessonsection, error) {
-	lessonSection := Lessonsection{SectionId: id}
+	lessonSection := Lessonsection{SectionID: id}
 	err := readDB().First(&lessonSection).Related(&lessonSection.Course).Related(&lessonSection.Lesson).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		logrus.Errorf("%+v", err)

@@ -1,9 +1,17 @@
 .PHONY: build clean tool lint help
 
 all: build
-
+#每行的分隔符为一个tab键，不能用多个空格
 build:
+    # @关闭回声
+	swag init
 	@go build -v .
+
+run:
+    # @关闭回声
+	swag init
+	@go build -v .
+	./go-gin-example
 
 tool:
 	go vet ./...; true

@@ -68,7 +68,6 @@ func (a *Article) AddArticleAndTag() {
 		fmt.Printf(err.Error())
 		return
 	}
-	panic("fdfdfdf")
 	//添加标签
 	if err := models.AddTagTrans(tx, "testTag", 1, "quons"); err != nil {
 		tx.Rollback()

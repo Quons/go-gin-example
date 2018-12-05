@@ -7,11 +7,11 @@ import (
 )
 
 type Lesson struct {
-	LessonId int64 `gorm:"primary_key;column:lessonId"`
+	LessonID int64 `gorm:"primary_key;column:lessonId"`
 	//关联查询，以ForeignKey作为外键 从Course表中以AssociationForeignKey 为references进行查询
 	//一对一，指定的是本方的外键以及对于另一方的reference
 	Course     Course    `gorm:"ForeignKey:courseId;AssociationForeignKey:courseId"`
-	CourseId   int64     `gorm:"column:courseId"`
+	CourseID   int64     `gorm:"column:courseId"`
 	Duration   int       `gorm:"column:duration"`
 	StartTime  time.Time `gorm:"column:startTime"`
 	AddTime    time.Time `gorm:"column:addTime"`
@@ -27,7 +27,7 @@ func ExistLessonByID(id int64) (bool, error) {
 		return false, err
 	}
 
-	if lesson.LessonId > 0 {
+	if lesson.LessonID > 0 {
 		return true, nil
 	}
 
@@ -52,7 +52,7 @@ func GetLessons(pageNum int, pageSize int, maps interface{}) ([]Lesson, error) {
 }
 
 func GetLesson(id int64) (*Lesson, error) {
-	lesson := Lesson{LessonId: id}
+	lesson := Lesson{LessonID: id}
 	err := readDB().First(&lesson).Related(&lesson.Course).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		logrus.Errorf("%+v", err)

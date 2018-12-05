@@ -24,7 +24,7 @@ func TestGetCourse(t *testing.T) {
 		t.Log(value.SectionName)
 
 	}
-	assert.Equal(t, int64(1), a.CourseId)
+	assert.Equal(t, int64(1), a.CourseID)
 }
 
 func TestExistCourseByID(t *testing.T) {
@@ -66,7 +66,7 @@ func TestAddCourse(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	t.Log(course.CourseId)
+	t.Log(course.CourseID)
 }
 
 func TestEditCourse(t *testing.T) {
@@ -75,7 +75,7 @@ func TestEditCourse(t *testing.T) {
 		t.Error(err)
 		return
 	}
-	course.CourseId = 21
+	course.CourseID = 21
 	course.CourseName = "hiahiahi"
 	course.Status = 0
 	err = AddOrUpdateCourse(course)

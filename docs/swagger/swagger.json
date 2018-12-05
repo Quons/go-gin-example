@@ -135,6 +135,9 @@
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "文章"
+                ],
                 "summary": "获取单个文章",
                 "parameters": [
                     {}
@@ -220,10 +223,33 @@
                 }
             }
         },
-        "/api/v1/code/getCourse": {
+        "/api/v1/tags/import": {
             "post": {
                 "produces": [
                     "application/json"
+                ],
+                "summary": "上传图片",
+                "parameters": [
+                    {}
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":200,\"data\":{\"image_save_url\":\"upload/images/96a.jpg\", \"image_url\": \"http://...\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/getCourse": {
+            "post": {
+                "description": "获取单个课程description",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "课程"
                 ],
                 "summary": "获取单个课程",
                 "parameters": [
@@ -243,172 +269,41 @@
                     }
                 ],
                 "responses": {
+                    "10000": {
+                        "description": "{\"code\":10000,\"data\":{},\"msg\":\"服务器错误\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     "200": {
-                        "description": "{\"code\":200,\"data\":{\"id\":3,\"created_on\":1516937037,\"modified_on\":0,\"tag_id\":11,\"tag\":{\"id\":11,\"created_on\":1516851591,\"modified_on\":0,\"name\":\"312321\",\"created_by\":\"4555\",\"modified_by\":\"\",\"state\":1},\"content\":\"5555\",\"created_by\":\"2412\",\"modified_by\":\"\",\"state\":1},\"msg\":\"ok\"}",
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/vo.CourseVo"
+                        }
+                    },
+                    "20000": {
+                        "description": "{\"code\":20000,\"data\":{},\"msg\":\"参数错误\"}",
                         "schema": {
                             "type": "string"
                         }
                     }
                 }
             }
-        },
-        "/api/v1/tags": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "获取多个文章标签",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Name",
-                        "name": "name",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "State",
-                        "name": "state",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"code\":200,\"data\":{\"lists\":[{\"id\":3,\"created_on\":1516849721,\"modified_on\":0,\"name\":\"3333\",\"created_by\":\"4555\",\"modified_by\":\"\",\"state\":0}],\"total\":29},\"msg\":\"ok\"}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "新增文章标签",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Name",
-                        "name": "name",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "State",
-                        "name": "state",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "CreatedBy",
-                        "name": "created_by",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"code\":200,\"data\":{},\"msg\":\"ok\"}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/tags/export": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "导出文章标签",
-                "parameters": [
-                    {},
-                    {}
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"code\":200,\"data\":{\"export_save_url\":\"export/abc.xlsx\", \"export_url\": \"http://...\"},\"msg\":\"ok\"}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/tags/import": {
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "导入文章标签",
-                "parameters": [
-                    {}
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"code\":200,\"data\":null,\"msg\":\"ok\"}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/tags/{id}": {
-            "put": {
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "修改文章标签",
-                "parameters": [
-                    {},
-                    {
-                        "type": "string",
-                        "description": "ID",
-                        "name": "name",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "State",
-                        "name": "state",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "ModifiedBy",
-                        "name": "modified_by",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"code\":200,\"data\":{},\"msg\":\"ok\"}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "删除文章标签",
-                "parameters": [
-                    {}
-                ],
-                "responses": {
-                    "200": {
-                        "description": "{\"code\":200,\"data\":{},\"msg\":\"ok\"}",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
+        }
+    },
+    "definitions": {
+        "vo.CourseVo": {
+            "type": "object",
+            "properties": {
+                "courseId": {
+                    "type": "integer"
+                },
+                "courseImage": {
+                    "type": "string"
+                },
+                "courseName": {
+                    "type": "string"
                 }
             }
         }

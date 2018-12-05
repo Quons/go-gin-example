@@ -18,7 +18,7 @@ func TestGetLesson(t *testing.T) {
 		return
 	}
 	t.Logf("%+v", a)
-	assert.Equal(t, int64(1), a.LessonId)
+	assert.Equal(t, int64(1), a.LessonID)
 }
 
 func TestExistLessonByID(t *testing.T) {
@@ -63,7 +63,7 @@ func TestAddLesson(t *testing.T) {
 }
 
 func TestEditLesson(t *testing.T) {
-	Lesson := &Lesson{LessonId: 20, LessonName: "testLessonsss"}
+	Lesson := &Lesson{LessonID: 20, LessonName: "testLessonsss"}
 	err := AddOrUpdateLesson(Lesson)
 	if err != nil {
 		t.Error(err)

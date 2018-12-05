@@ -7,13 +7,13 @@ import (
 )
 
 type Classlesson struct {
-	Id int64 `gorm:"primary_key;column:id"`
+	ID int64 `gorm:"primary_key;column:id"`
 	//关联查询，以ForeignKey作为外键 从Course表中以AssociationForeignKey 为references进行查询
 	Course    Course    `gorm:"ForeignKey:courseId;AssociationForeignKey:courseId"`
-	CourseId  int64     `gorm:"column:courseId"`
+	CourseID  int64     `gorm:"column:courseId"`
 	Lesson    Lesson    `gorm:"ForeignKey:lessonId;AssociationForeignKey:lessonId"`
-	LessonId  int64     `gorm:"column:lessonId"`
-	PhaseId   int64     `gorm:"column:phaseId"`
+	LessonID  int64     `gorm:"column:lessonId"`
+	PhaseID   int64     `gorm:"column:phaseId"`
 	StartTime time.Time `gorm:"column:startTime"`
 }
 
@@ -24,7 +24,7 @@ func ExistClasslessonByID(id int64) (bool, error) {
 		return false, err
 	}
 
-	if classlesson.Id > 0 {
+	if classlesson.ID > 0 {
 		return true, nil
 	}
 
@@ -49,9 +49,9 @@ func GetClasslessons(pageNum int, pageSize int, maps interface{}) ([]Classlesson
 }
 
 //获取phaseId的班级信息
-func GetClasslessonsByPhase(phaseId int64) ([]Classlesson, error) {
+func GetClasslessonsByPhase(phaseID int64) ([]Classlesson, error) {
 	var classLessons []Classlesson
-	err := readDB().Preload("Lesson").Preload("Lesson.Course").Preload("Course").Where("phaseId = ? and startTime < ?", phaseId, time.Now()).Find(&classLessons).Error
+	err := readDB().Preload("Lesson").Preload("Lesson.Course").Preload("Course").Where("phaseId = ? and startTime < ?", phaseID, time.Now()).Find(&classLessons).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return classLessons, err
 	}
@@ -59,7 +59,7 @@ func GetClasslessonsByPhase(phaseId int64) ([]Classlesson, error) {
 }
 
 func GetClasslesson(id int64) (*Classlesson, error) {
-	classLesson := Classlesson{Id: id}
+	classLesson := Classlesson{ID: id}
 	err := readDB().First(&classLesson).Related(&classLesson.Course).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		logrus.Errorf("%+v", err)

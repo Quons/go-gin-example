@@ -1,7 +1,7 @@
 package e
 
 const (
-	SUCCESS = 200
+	SUCCESS = 99999
 	ERROR   = 500
 
 	ERROR_EXIST_TAG       = 10001

@@ -21,7 +21,7 @@ var dirName string
 func Setup() {
 	//获取执行目录
 	var err error
-	logPath, err = file.MkRdir("log")
+	logPath, err = file.MkRdir("logs")
 	if err != nil {
 		logrus.Fatal("get log path error")
 	}

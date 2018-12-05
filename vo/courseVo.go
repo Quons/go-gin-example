@@ -8,9 +8,9 @@ type CourseVo struct {
 	CourseImage string
 }
 
-func (c CourseVo) Transform(do *models.Course) (*CourseVo) {
+func (c CourseVo) Transform(do *models.Course) *CourseVo {
 	var vo CourseVo
-	vo.CourseId = do.CourseId
+	vo.CourseId = do.CourseID
 	vo.CourseName = do.CourseName
 	vo.CourseImage = do.CourseImage
 	return &vo

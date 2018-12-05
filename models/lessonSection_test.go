@@ -18,7 +18,7 @@ func TestGetLessonSection(t *testing.T) {
 		return
 	}
 	t.Logf("lessonName:%+v,courseName:%v", a.Lesson.LessonName, a.Course.CourseName)
-	assert.Equal(t, int64(1), a.SectionId)
+	assert.Equal(t, int64(1), a.SectionID)
 }
 
 func TestExistLessonSectionByID(t *testing.T) {
@@ -63,7 +63,7 @@ func TestAddLessonSection(t *testing.T) {
 }
 
 func TestEditLessonSection(t *testing.T) {
-	LessonSection := &Lessonsection{SectionId: 20, SectionName: "testLessonSectionsss"}
+	LessonSection := &Lessonsection{SectionID: 20, SectionName: "testLessonSectionsss"}
 	err := AddOrUpdateLessonSection(LessonSection)
 	if err != nil {
 		t.Error(err)

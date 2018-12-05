@@ -7,7 +7,7 @@ import (
 )
 
 type Course struct {
-	CourseId   int64  `gorm:"primary_key;column:courseId"`
+	CourseID   int64  `gorm:"primary_key;column:courseId"`
 	CourseName string `gorm:"column:courseName"`
 	//一对多，指定的是多的一方的外键以及对于一的一方的reference
 	Lessons            []Lesson        `gorm:"ForeignKey:lessonId"`
@@ -19,10 +19,10 @@ type Course struct {
 	Price              float64         `gorm:"column:price"`
 	LimitNum           int             `gorm:"column:limitNum"`
 	BuyNum             int             `gorm:"column:buyNum"`
-	MallProductId      int             `gorm:"column:mallProductId"`
+	MallProductID      int             `gorm:"column:mallProductId"`
 	Status             int8            `gorm:"column:status"`
-	TeacherId          int64           `gorm:"column:teacherId"`
-	AssistantTeacherId int64           `gorm:"column:assistantTeacherId"`
+	TeacherID          int64           `gorm:"column:teacherId"`
+	AssistantTeacherID int64           `gorm:"column:assistantTeacherId"`
 	AddTime            time.Time       `gorm:"column:addTime"`
 	StartTime          time.Time       `gorm:"column:startTime"`
 	EndTime            time.Time       `gorm:"column:endTime"`
@@ -36,7 +36,7 @@ type Course struct {
 	NeedBuyCourse      int8            `gorm:"column:needBuyCourse"`
 	Summary            string          `gorm:"column:summary"`
 	AnswerFile         string          `gorm:"column:answerFile"`
-	OpenSectionId      int64           `gorm:"column:openSectionId"`
+	OpenSectionID      int64           `gorm:"column:openSectionId"`
 }
 
 /*// 设置User的表名为`profiles`
@@ -51,7 +51,7 @@ func ExistCourseByID(id int64) (bool, error) {
 		return false, err
 	}
 
-	if course.CourseId > 0 {
+	if course.CourseID > 0 {
 		return true, nil
 	}
 
@@ -77,7 +77,7 @@ func GetCourses(pageNum int, pageSize int, maps interface{}) ([]Course, error) {
 
 func GetCourse(id int64) (*Course, error) {
 	var course Course
-	course.CourseId = id
+	course.CourseID = id
 	err := readDB().Preload("LessonSections", func(db *gorm.DB) *gorm.DB { return db.Where("sectionNum > 4") }).Preload("Lessons").First(&course).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		logrus.Errorf("%+v", err)
@@ -85,6 +85,7 @@ func GetCourse(id int64) (*Course, error) {
 	}
 	return &course, nil
 }
+
 //id为0时新增，否则更新
 func AddOrUpdateCourse(course *Course) error {
 	if err := WriteDB().Save(course).Error; err != nil {

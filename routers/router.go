@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	//启用swagger文档
 	_ "github.com/Quons/go-gin-example/docs"
+	"github.com/Quons/go-gin-example/middleware"
 	"github.com/Quons/go-gin-example/pkg/export"
 	"github.com/Quons/go-gin-example/pkg/logging"
 	"github.com/Quons/go-gin-example/pkg/qrcode"
@@ -15,8 +16,6 @@ import (
 	"github.com/Quons/go-gin-example/routers/api/v1"
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
-	"github.com/Quons/go-gin-example/routers/api/v1/code"
-	"github.com/Quons/go-gin-example/middleware"
 )
 
 /*路由注册*/
@@ -32,19 +31,8 @@ func registerRouter(r *gin.Engine) {
 	apiv1 := r.Group("/api/v1")
 	//验证token
 	//apiv1.Use(jwt.JWT())
+	apiv1.Use(middleware.CheckToken())
 	{
-		//获取标签列表
-		apiv1.GET("/tags", v1.GetTags)
-		//新建标签
-		apiv1.POST("/tags", v1.AddTag)
-		//更新指定标签
-		apiv1.PUT("/tags/:id", v1.EditTag)
-		//删除指定标签
-		apiv1.DELETE("/tags/:id", v1.DeleteTag)
-		//导出标签
-		r.POST("/tags/export", v1.ExportTag)
-		//导入标签
-		r.POST("/tags/import", v1.ImportTag)
 		//获取文章列表
 		apiv1.GET("/articles", v1.GetArticles)
 		//获取指定文章
@@ -60,14 +48,14 @@ func registerRouter(r *gin.Engine) {
 		//生成文章海报
 		apiv1.POST("/articles/poster/generate", v1.GenerateArticlePoster)
 	}
-	apiv1Code := r.Group("/api/v1/code")
-	apiv1Code.Use(middleware.CheckToken())
+	apiv2 := r.Group("/api/v2")
 	{
-		apiv1Code.POST("/getCourse", code.GetCourse)
+		apiv2.POST("/getCourse", v1.GetCourse)
 	}
 
 }
 
+/*InitRouter 初始化路由*/
 func InitRouter() *gin.Engine {
 	gin.SetMode(setting.ServerSetting.RunMode)
 	r := gin.New()

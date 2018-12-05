@@ -18,7 +18,7 @@ func TestGetClassLesson(t *testing.T) {
 		return
 	}
 	t.Logf("%+v", a)
-	assert.Equal(t, int64(1), a.LessonId)
+	assert.Equal(t, int64(1), a.LessonID)
 }
 
 func TestGetClasslessonsByPhase(t *testing.T) {
@@ -76,7 +76,7 @@ func TestAddClassLesson(t *testing.T) {
 }
 
 func TestEditClassLesson(t *testing.T) {
-	Lesson := &Classlesson{LessonId: 20, PhaseId: 22}
+	Lesson := &Classlesson{LessonID: 20, PhaseID: 22}
 	err := AddOrUpdateClasslesson(Lesson)
 	if err != nil {
 		t.Error(err)

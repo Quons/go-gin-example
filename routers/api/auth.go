@@ -1,8 +1,6 @@
 package api
 
 import (
-	"net/http"
-
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
 
@@ -17,6 +15,7 @@ type auth struct {
 	Password string `valid:"Required; MaxSize(50)"`
 }
 
+/*GetAuth 验证信息*/
 func GetAuth(c *gin.Context) {
 	appG := app.Gin{C: c}
 	valid := validation.Validation{}
@@ -29,29 +28,29 @@ func GetAuth(c *gin.Context) {
 
 	if !ok {
 		app.MarkErrors(valid.Errors)
-		appG.Response(http.StatusOK, e.ERROR_INVALID_PARAMS, nil)
+		appG.Response(nil, e.ERROR_INVALID_PARAMS)
 		return
 	}
 
 	authService := auth_service.Auth{Username: username, Password: password}
 	isExist, err := authService.Check()
 	if err != nil {
-		appG.Response(http.StatusOK, e.ERROR_AUTH_CHECK_TOKEN_FAIL, nil)
+		appG.Response(nil, e.ERROR_AUTH_CHECK_TOKEN_FAIL)
 		return
 	}
 
 	if !isExist {
-		appG.Response(http.StatusOK, e.ERROR_AUTH, nil)
+		appG.Response(nil, e.ERROR_AUTH)
 		return
 	}
 
 	token, err := util.GenerateToken(username, password)
 	if err != nil {
-		appG.Response(http.StatusOK, e.ERROR_AUTH_TOKEN, nil)
+		appG.Response(nil, e.ERROR_AUTH_TOKEN)
 		return
 	}
 
-	appG.Response(http.StatusOK, e.SUCCESS, map[string]string{
+	appG.Response(map[string]string{
 		"token": token,
-	})
+	}, e.SUCCESS)
 }
