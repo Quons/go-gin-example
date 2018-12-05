@@ -25,12 +25,12 @@ import (
 /*路由注册*/
 func registerRouter(r *gin.Engine) {
 	r.GET("/auth", api.GetAuth)
-	r.GET("/", func(c *gin.Context) {
+	/*r.GET("/", func(c *gin.Context) {
 		name := c.Query("name")
 		logrus.Info(name)
 		time.Sleep(20 * time.Second)
 		c.String(http.StatusOK, "welcome Gin Server:%s\n", name)
-	})
+	})*/
 	r.POST("/upload", api.UploadImage)
 	apiv1 := r.Group("/api/v1")
 	//验证token
