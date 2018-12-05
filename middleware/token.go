@@ -20,6 +20,8 @@ func CheckToken() gin.HandlerFunc {
 				"msg":  e.GetMsg(e.INVALID_PARAMS),
 				"data": data,
 			})
+			c.Abort()
+			return
 		} else {
 			//从用户中心拉取用户信息，并设置到
 			apiStudent, err := util.GetStudentFromUserCenter(token)
