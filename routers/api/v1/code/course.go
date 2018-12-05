@@ -24,7 +24,7 @@ func GetCourse(c *gin.Context) {
 	courseId, err := com.StrTo(c.Query("courseId")).Int64()
 	if err != nil {
 		logrus.Info(err)
-		appG.Response(http.StatusOK, e.INVALID_PARAMS, nil)
+		appG.Response(http.StatusOK, e.ERROR_INVALID_PARAMS, nil)
 		return
 	}
 

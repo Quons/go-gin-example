@@ -26,7 +26,7 @@ func UploadImage(c *gin.Context) {
 	}
 
 	if image == nil {
-		appG.Response(http.StatusOK, e.INVALID_PARAMS, nil)
+		appG.Response(http.StatusOK, e.ERROR_INVALID_PARAMS, nil)
 		return
 	}
 

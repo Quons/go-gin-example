@@ -17,8 +17,8 @@ func CheckToken() gin.HandlerFunc {
 		if token == "" {
 			logrus.Info("empty token")
 			c.JSON(http.StatusUnauthorized, gin.H{
-				"code": e.INVALID_PARAMS,
-				"msg":  e.GetMsg(e.INVALID_PARAMS),
+				"code": e.ERROR_INVALID_PARAMS,
+				"msg":  e.GetMsg(e.ERROR_INVALID_PARAMS),
 				"data": data,
 			})
 			c.Abort()

@@ -12,7 +12,7 @@ func BindAndValid(c *gin.Context, form interface{}) (int, int) {
 	err := c.Bind(form)
 	if err != nil {
 		logrus.Errorf(err.Error())
-		return http.StatusOK, e.INVALID_PARAMS
+		return http.StatusOK, e.ERROR_INVALID_PARAMS
 	}
 
 	valid := validation.Validation{}
@@ -23,7 +23,7 @@ func BindAndValid(c *gin.Context, form interface{}) (int, int) {
 	}
 	if !check {
 		MarkErrors(valid.Errors)
-		return http.StatusOK, e.INVALID_PARAMS
+		return http.StatusOK, e.ERROR_INVALID_PARAMS
 	}
 
 	return http.StatusOK, e.SUCCESS

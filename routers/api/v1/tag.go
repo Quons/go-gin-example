@@ -170,7 +170,7 @@ func DeleteTag(c *gin.Context) {
 
 	if valid.HasErrors() {
 		app.MarkErrors(valid.Errors)
-		appG.Response(http.StatusOK, e.INVALID_PARAMS, nil)
+		appG.Response(http.StatusOK, e.ERROR_INVALID_PARAMS, nil)
 	}
 
 	tagService := tag_service.Tag{ID: id}

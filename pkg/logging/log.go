@@ -88,7 +88,7 @@ func (f *CodeFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 }
 
 func GetLogrusWriter() *rotatelogs.RotateLogs {
-	logrusPath, err := file.MkRdir("log/" + dirName)
+	logrusPath, err := file.MkRdir("logs/" + dirName)
 	if err != nil {
 		logrus.Fatal("get log path error")
 	}
@@ -106,7 +106,7 @@ func GetLogrusWriter() *rotatelogs.RotateLogs {
 
 //获取gin日志writer
 func GetGinLogWriter() *rotatelogs.RotateLogs {
-	ginLogPath, err := file.MkRdir("log/gin")
+	ginLogPath, err := file.MkRdir("logs/gin")
 	if err != nil {
 		logrus.Fatal("get log path error")
 	}

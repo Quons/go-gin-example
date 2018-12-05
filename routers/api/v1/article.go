@@ -31,7 +31,7 @@ func GetArticle(c *gin.Context) {
 
 	if valid.HasErrors() {
 		app.MarkErrors(valid.Errors)
-		appG.Response(http.StatusOK, e.INVALID_PARAMS, nil)
+		appG.Response(http.StatusOK, e.ERROR_INVALID_PARAMS, nil)
 		return
 	}
 
@@ -82,7 +82,7 @@ func GetArticles(c *gin.Context) {
 
 	if valid.HasErrors() {
 		app.MarkErrors(valid.Errors)
-		appG.Response(http.StatusOK, e.INVALID_PARAMS, nil)
+		appG.Response(http.StatusOK, e.ERROR_INVALID_PARAMS, nil)
 		return
 	}
 
@@ -274,7 +274,7 @@ func DeleteArticle(c *gin.Context) {
 
 	if valid.HasErrors() {
 		app.MarkErrors(valid.Errors)
-		appG.Response(http.StatusOK, e.INVALID_PARAMS, nil)
+		appG.Response(http.StatusOK, e.ERROR_INVALID_PARAMS, nil)
 		return
 	}
 
