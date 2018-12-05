@@ -12,6 +12,7 @@ import (
 	"math/rand"
 	"strings"
 	"time"
+	"github.com/sirupsen/logrus"
 )
 
 var wdb *gorm.DB
@@ -37,7 +38,7 @@ func Setup() {
 		setting.DatabaseSetting.Name))
 
 	if err != nil {
-		log.Println(err)
+		logrus.Error(err)
 	}
 
 	wdb.LogMode(true)
@@ -59,7 +60,7 @@ func Setup() {
 			setting.DatabaseSetting.Name))
 
 		if err != nil {
-			log.Println(err)
+			logrus.Error(err)
 		}
 		rdb.LogMode(true)
 		rdb.SetLogger(log.New(logging.GetGinLogWriter(), "[GORM] ", log.Ldate))
