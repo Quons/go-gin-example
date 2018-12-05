@@ -48,9 +48,8 @@ func registerRouter(r *gin.Engine) {
 		//生成文章海报
 		apiv1.POST("/articles/poster/generate", v1.GenerateArticlePoster)
 	}
-	apiv2 := r.Group("/api/v2")
 	{
-		apiv2.POST("/getCourse", v1.GetCourse)
+		apiv1.POST("/getCourse", v1.GetCourse)
 	}
 
 }

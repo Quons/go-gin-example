@@ -6,13 +6,13 @@ import (
 )
 
 type Course struct {
-	CourseId int64
+	CourseID int64 `json:"courseId"`
 }
 
 func (c *Course) Get() (*models.Course, error) {
-	course, err := models.GetCourse(c.CourseId)
+	course, err := models.GetCourse(c.CourseID)
 	if err != nil {
-		log.WithField("courseId", c.CourseId).Error(err)
+		log.WithField("courseId", c.CourseID).Error(err)
 		return course, err
 	}
 	return course, nil

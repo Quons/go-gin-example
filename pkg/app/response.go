@@ -5,6 +5,7 @@ import (
 
 	"github.com/Quons/go-gin-example/pkg/e"
 	"github.com/sirupsen/logrus"
+	"net/http"
 )
 
 type Gin struct {
@@ -15,17 +16,27 @@ type Gin struct {
 func (g *Gin) Response(data interface{}, code ...int) {
 	if len(code) < 1 {
 		logrus.Error("invalid code param")
-		g.C.JSON(code[1], gin.H{
+		g.C.JSON(http.StatusInternalServerError, gin.H{
 			"code": e.ERROR_SERVER_ERROR,
 			"msg":  e.GetMsg(e.ERROR_SERVER_ERROR),
 			"data": data,
 		})
 	}
-	g.C.JSON(code[1], gin.H{
-		"code": code[0],
-		"msg":  e.GetMsg(code[0]),
-		"data": data,
-	})
 
+	if len(code) == 1 {
+		g.C.JSON(http.StatusOK, gin.H{
+			"code": code[0],
+			"msg":  e.GetMsg(code[0]),
+			"data": data,
+		})
+	}
+
+	if len(code) == 2 {
+		g.C.JSON(code[1], gin.H{
+			"code": code[0],
+			"msg":  e.GetMsg(code[0]),
+			"data": data,
+		})
+	}
 	return
 }
