@@ -26,6 +26,7 @@ func GetUserCenterConfig(forceUpdate bool) ConfigInfo {
 	config, httpErr := HttpGet(setting.UserCenter.ConfigUrl1)
 	jsonErr := json.Unmarshal([]byte(config), &configInfo)
 	if httpErr != nil || jsonErr != nil || configInfo.Code != 99999 {
+		log.WithFields(log.Fields{"httpErr": httpErr, "jsonError": jsonErr, "configInfo": configInfo}).Error("get user config err")
 		//发生错误，重试
 		config, httpErr = HttpGet(setting.UserCenter.ConfigUrl2)
 		jsonErr = json.Unmarshal([]byte(config), &configInfo)
