@@ -16,7 +16,7 @@ dev:
 run:
     # @关闭回声
 	@go build -v .
-	sudo systemctl restart
+	sudo systemctl restart gin
 
 tool:
 	go vet ./...; true
