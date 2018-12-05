@@ -36,7 +36,7 @@ func Setup() {
 	}
 	logrus.SetLevel(logLevel)
 	//打印行号，funcName
-	//logrus.SetReportCaller(true)
+	logrus.SetReportCaller(true)
 	//输出设置
 	writer := GetLogrusWriter()
 	//设置local file system hook

@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"github.com/Quons/go-gin-example/middleware"
+	"github.com/Quons/go-gin-example/routers/api/v1/code"
 )
 
 /*路由注册*/
@@ -34,7 +35,6 @@ func registerRouter(r *gin.Engine) {
 	apiv1 := r.Group("/api/v1")
 	//验证token
 	//apiv1.Use(jwt.JWT())
-	apiv1.Use(middleware.CheckToken())
 	{
 		//获取标签列表
 		apiv1.GET("/tags", v1.GetTags)
@@ -63,6 +63,12 @@ func registerRouter(r *gin.Engine) {
 		//生成文章海报
 		apiv1.POST("/articles/poster/generate", v1.GenerateArticlePoster)
 	}
+	apiv1Code := r.Group("/api/v1/code")
+	apiv1Code.Use(middleware.CheckToken())
+	{
+		apiv1Code.POST("/getCourse", code.GetCourse)
+	}
+
 }
 
 func InitRouter() *gin.Engine {
