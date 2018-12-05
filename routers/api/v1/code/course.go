@@ -10,6 +10,7 @@ import (
 	"github.com/Quons/go-gin-example/pkg/e"
 	"github.com/Quons/go-gin-example/service/course_service"
 	"github.com/Quons/go-gin-example/vo"
+	"github.com/sirupsen/logrus"
 )
 
 // @Summary 获取单个课程
@@ -22,6 +23,7 @@ func GetCourse(c *gin.Context) {
 	appG := app.Gin{C: c}
 	courseId := com.StrTo(c.Param("courseId")).MustInt64()
 	if courseId <= 0 {
+		logrus.WithField("courseId",courseId).Info("invalid param")
 		appG.Response(http.StatusOK, e.INVALID_PARAMS, nil)
 		return
 	}
