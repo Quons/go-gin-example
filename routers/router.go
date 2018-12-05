@@ -13,11 +13,8 @@ import (
 	"github.com/Quons/go-gin-example/pkg/upload"
 	"github.com/Quons/go-gin-example/routers/api"
 	"github.com/Quons/go-gin-example/routers/api/v1"
-	"github.com/sirupsen/logrus"
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
-	"time"
-
 	"github.com/Quons/go-gin-example/middleware"
 	"github.com/Quons/go-gin-example/routers/api/v1/code"
 )
