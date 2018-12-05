@@ -30,7 +30,7 @@ func GetCourse(c *gin.Context) {
 		return
 	}
 	//获取studentId
-	studentInfo := c.MustGet(e.PARAM_STUDENT_INFO).(models.Student)
+	studentInfo := c.MustGet(e.PARAM_STUDENT_INFO).(*models.Student)
 
 	log.WithField("studentInfo", studentInfo).Info()
 	courseDO, err := course.Get()
