@@ -21,9 +21,9 @@ import (
 // @Router /api/v1/code/getCourse [post]
 func GetCourse(c *gin.Context) {
 	appG := app.Gin{C: c}
-	courseId := com.StrTo(c.Query("courseId")).MustInt64()
-	if courseId <= 0 {
-		logrus.WithField("courseId",courseId).Info("invalid param")
+	courseId, err := com.StrTo(c.Query("courseId")).Int64()
+	if err != nil {
+		logrus.Info(err)
 		appG.Response(http.StatusOK, e.INVALID_PARAMS, nil)
 		return
 	}
