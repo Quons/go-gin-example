@@ -67,9 +67,9 @@ func GetStudentFromUserCenter(token string) (ApiStudent, error) {
 	var postData = make(map[string]string)
 	postData["token"] = token
 	reqUrl := strings.Replace(setting.UserCenter.GetStudentByTokenUrl, "{ip}", userCenterIp, 1)
-	studentInfo, studentInfoErr := HttpPost(reqUrl, postData)
-	if studentInfoErr != nil {
-		return apiStudent, studentInfoErr
+	studentInfo, err := HttpPost(reqUrl, postData)
+	if err != nil {
+		return apiStudent, err
 	}
 	if studentInfo == "" {
 		return apiStudent, errors.New("fail to get userinfo from user center,token:" + token)

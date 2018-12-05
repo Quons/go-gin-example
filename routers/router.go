@@ -16,6 +16,7 @@ import (
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"github.com/Quons/go-gin-example/routers/api/v1/code"
+	"github.com/Quons/go-gin-example/middleware"
 )
 
 /*路由注册*/
@@ -60,7 +61,7 @@ func registerRouter(r *gin.Engine) {
 		apiv1.POST("/articles/poster/generate", v1.GenerateArticlePoster)
 	}
 	apiv1Code := r.Group("/api/v1/code")
-	//apiv1Code.Use(middleware.CheckToken())
+	apiv1Code.Use(middleware.CheckToken())
 	{
 		apiv1Code.POST("/getCourse", code.GetCourse)
 	}
