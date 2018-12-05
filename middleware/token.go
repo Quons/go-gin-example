@@ -36,8 +36,7 @@ func CheckToken() gin.HandlerFunc {
 				c.Abort()
 				return
 			}
-			logrus.WithField("apiStudent", apiStudent).Info("sss")
-			c.Set("studentId", apiStudent.Data.StudentId)
+			c.Set(e.PARAM_STUDENT_ID, apiStudent.Data.StudentId)
 		}
 		c.Next()
 	}

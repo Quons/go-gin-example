@@ -6,7 +6,8 @@ import (
 	"github.com/Quons/go-gin-example/service/course_service"
 	"github.com/Quons/go-gin-example/vo"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
+	"github.com/Quons/go-gin-example/models"
 )
 
 // @Tags 课程
@@ -24,12 +25,19 @@ func GetCourse(c *gin.Context) {
 	course := course_service.Course{}
 	err := c.Bind(&course)
 	if err != nil {
-		logrus.Info(err)
+		log.Info(err)
 		appG.Response(nil, e.ERROR_INVALID_PARAMS)
 		return
 	}
-	studentId := c.GetInt64("studentId")
-	logrus.WithField("studentId", studentId)
+	//获取studentId
+	studentId := c.GetInt64(e.PARAM_STUDENT_ID)
+	studentInfo, err := models.GetStudent(studentId)
+	if err != nil {
+		log.WithField("studentId", studentId).Error(err)
+		appG.Response(nil, e.ERROR_SERVER_ERROR)
+		return
+	}
+	log.WithField("studentInfo", studentInfo).Info()
 	courseDO, err := course.Get()
 	if err != nil {
 		appG.Response(nil, e.ERROR_SERVER_ERROR)
