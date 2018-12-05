@@ -15,7 +15,6 @@ dev:
 
 run:
     # @关闭回声
-	swag init
 	@go build -v .
 	sudo systemctl restart
 
