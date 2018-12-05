@@ -78,7 +78,7 @@ func GetCourses(pageNum int, pageSize int, maps interface{}) ([]Course, error) {
 func GetCourse(id int64) (*Course, error) {
 	var course Course
 	//err := readDB().Preload("LessonSections", func(db *gorm.DB) *gorm.DB { return db.Where("sectionNum > 4") }).Preload("Lessons").First(&course).Error
-	err := readDB().Where("courseId", id).First(&course).Error
+	err := readDB().Where("courseId=?", id).First(&course).Error
 	if err != nil && err != gorm.ErrRecordNotFound {
 		logrus.Errorf("%+v", err)
 		return nil, err
