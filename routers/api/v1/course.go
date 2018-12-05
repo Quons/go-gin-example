@@ -29,9 +29,9 @@ func GetCourse(c *gin.Context) {
 		appG.Response(nil, e.ERROR_INVALID_PARAMS)
 		return
 	}
-	//获取studentId
+	log.WithField("courseId", course.CourseID).Info()
+	//获取student信心
 	studentInfo := c.MustGet(e.PARAM_STUDENT_INFO).(*models.Student)
-
 	log.WithField("studentInfo", studentInfo).Info()
 	courseDO, err := course.Get()
 	if err != nil {
