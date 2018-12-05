@@ -15,7 +15,6 @@ import (
 	"github.com/Quons/go-gin-example/routers/api/v1"
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
-	"github.com/Quons/go-gin-example/middleware"
 	"github.com/Quons/go-gin-example/routers/api/v1/code"
 )
 
