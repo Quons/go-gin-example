@@ -31,7 +31,7 @@ func GetCourse(c *gin.Context) {
 	}
 	log.WithField("courseId", course.CourseID).Info()
 	//获取student信心
-	studentInfo := c.MustGet(e.PARAM_STUDENT_INFO).(*models.Student)
+	studentInfo := c.MustGet(gin.AuthUserKey).(*models.Student)
 	log.WithField("studentInfo", studentInfo).Info()
 	courseDO, err := course.Get()
 	if err != nil {

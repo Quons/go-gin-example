@@ -15,6 +15,7 @@ func CheckToken() gin.HandlerFunc {
 		var data interface{}
 
 		token := c.Query("token")
+		logrus.Info("token:",token)
 		if token == "" {
 			logrus.Info("empty token")
 			c.JSON(http.StatusUnauthorized, gin.H{
@@ -25,8 +26,10 @@ func CheckToken() gin.HandlerFunc {
 			c.Abort()
 			return
 		} else {
+
 			//从用户中心拉取用户信息，并设置到
 			apiStudent, err := util.GetStudentFromUserCenter(token)
+			logrus.Info("apiStudent:","......")
 			if err != nil {
 				logrus.WithField("token", token).Error(err)
 				c.JSON(http.StatusUnauthorized, gin.H{
@@ -48,7 +51,7 @@ func CheckToken() gin.HandlerFunc {
 				c.Abort()
 				return
 			}
-			c.Set(e.PARAM_STUDENT_INFO, studentInfo)
+			c.Set(gin.AuthUserKey, studentInfo)
 		}
 		c.Next()
 	}
