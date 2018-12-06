@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	//启用swagger文档
 	_ "github.com/Quons/go-gin-example/docs"
+	"github.com/Quons/go-gin-example/middleware"
 	"github.com/Quons/go-gin-example/pkg/export"
 	"github.com/Quons/go-gin-example/pkg/logging"
 	"github.com/Quons/go-gin-example/pkg/qrcode"
@@ -15,7 +16,6 @@ import (
 	"github.com/Quons/go-gin-example/routers/api/v1"
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
-	"github.com/Quons/go-gin-example/middleware"
 )
 
 /*路由注册*/

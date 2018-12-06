@@ -99,7 +99,6 @@ func GetStudentFromUserCenter(token string) (ApiStudent, error) {
 }
 
 /*通过studentId 获取用户中心token*/
-
 func GetApiTokenByStudentId(studentId int64) (ApiToken, error) {
 	var apiToken ApiToken
 	/*获取用户中心ip*/

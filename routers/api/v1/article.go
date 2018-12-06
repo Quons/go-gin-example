@@ -182,6 +182,7 @@ func AddArticleAndTag(c *gin.Context) {
 	a.AddArticleAndTag()
 	appG.Response(nil, e.SUCCESS)
 }
+
 /*EditArticleForm 编辑*/
 type EditArticleForm struct {
 	ID            int    `form:"id" valid:"Required;Min(1)"`

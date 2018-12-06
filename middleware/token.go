@@ -1,12 +1,12 @@
 package middleware
 
 import (
+	"github.com/Quons/go-gin-example/models"
 	"github.com/Quons/go-gin-example/pkg/e"
 	"github.com/Quons/go-gin-example/pkg/util"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
-	"github.com/Quons/go-gin-example/models"
 )
 
 func CheckToken() gin.HandlerFunc {
@@ -14,8 +14,8 @@ func CheckToken() gin.HandlerFunc {
 		c.Set("studentId", "123456")
 		var data interface{}
 
-		token := c.Query("token")
-		logrus.Info("token:",token)
+		token := c.PostForm("token")
+		logrus.Info("token:", token)
 		if token == "" {
 			logrus.Info("empty token")
 			c.JSON(http.StatusUnauthorized, gin.H{
@@ -29,7 +29,7 @@ func CheckToken() gin.HandlerFunc {
 
 			//从用户中心拉取用户信息，并设置到
 			apiStudent, err := util.GetStudentFromUserCenter(token)
-			logrus.Info("apiStudent:","......")
+
 			if err != nil {
 				logrus.WithField("token", token).Error(err)
 				c.JSON(http.StatusUnauthorized, gin.H{

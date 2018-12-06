@@ -6,7 +6,7 @@ import (
 )
 
 type Course struct {
-	CourseID int64 `json:"courseId"`
+	CourseID int64 `form:"courseId" json:"courseId" binding:"required,gte=0,lte=4"`
 }
 
 func (c *Course) Get() (*models.Course, error) {
@@ -17,3 +17,4 @@ func (c *Course) Get() (*models.Course, error) {
 	}
 	return course, nil
 }
+

@@ -226,6 +226,9 @@
         "/api/v1/getCourse": {
             "post": {
                 "description": "获取单个课程description",
+                "consumes": [
+                    "application/x-www-form-urlencoded"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -238,14 +241,14 @@
                         "type": "string",
                         "description": "用户token",
                         "name": "token",
-                        "in": "query",
+                        "in": "formData",
                         "required": true
                     },
                     {
                         "type": "integer",
                         "description": "课程ID",
                         "name": "courseId",
-                        "in": "query",
+                        "in": "formData",
                         "required": true
                     }
                 ],
