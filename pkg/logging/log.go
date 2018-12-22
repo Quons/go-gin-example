@@ -53,7 +53,7 @@ func Setup() {
 	//添加hook
 	logrus.AddHook(lfsHook)
 
-	conn, err := net.Dial("tcp", "127.0.0.1:8081")
+	conn, err := net.Dial("tcp", "127.0.0.1:9081")
 	if err != nil {
 		logrus.Fatal(err)
 	}
@@ -62,14 +62,15 @@ func Setup() {
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	logrus.AddHook(logrustashHook)
-
+	log := logrus.New()
+	log.AddHook(logrustashHook)
+	log.WithField("name", "liuyongchao").Errorf("名字错了error")
 	go func() {
 		for {
 			time.Sleep(5 * time.Second)
-			logrus.WithField("name", "liuyongchao").Errorf("名字错了error")
-			logrus.WithField("name", "liuyongchao").Info("名字错了info")
-			logrus.WithField("name", "liuyongchao").Debug("名字错了debug")
+			log.WithField("name", "liuyongchao").Errorf("名字错了error")
+			log.WithField("name", "liuyongchao").Info("名字错了info")
+			log.WithField("name", "liuyongchao").Debug("名字错了debug")
 		}
 	}()
 }
