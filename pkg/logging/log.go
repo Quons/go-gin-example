@@ -14,6 +14,7 @@ import (
 	"strconv"
 	"time"
 	"github.com/bshuster-repo/logrus-logstash-hook"
+	"net"
 )
 
 var logPath string
@@ -52,8 +53,12 @@ func Setup() {
 	//添加hook
 	logrus.AddHook(lfsHook)
 
+	conn, err := net.Dial("tcp", "127.0.0.1:8081")
+	if err != nil {
+		logrus.Fatal(err)
+	}
 	/*logstash*/
-	logrustashHook, err := logrustash.NewHook("tcp", "localhost:8081", "go-gin-example")
+	logrustashHook, err := logrustash.NewHookWithConn(conn, "go-gin-example")
 	if err != nil {
 		logrus.Fatal(err)
 	}
