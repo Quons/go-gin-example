@@ -58,7 +58,7 @@ func Setup() {
 		logrus.Fatal(err)
 	}
 	/*logstash*/
-	logrustashHook, err := logrustash.NewHookWithConn(conn, "go-gin-example")
+	logrustashHook, err := logrustash.NewHookWithFieldsAndConn(conn, "go-gin-example", logrus.Fields{"appname": "gin"})
 	if err != nil {
 		logrus.Fatal(err)
 	}
