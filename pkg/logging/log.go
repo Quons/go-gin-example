@@ -17,6 +17,7 @@ import (
 	"gopkg.in/sohlich/elogrus.v3"
 
 	"github.com/olivere/elastic"
+	"os"
 )
 
 var logPath string
@@ -54,30 +55,27 @@ func Setup() {
 	}, &CodeFormatter{})
 	//添加hook
 	logrus.AddHook(lfsHook)
-	/*logstash*/
-	/*logrustashHook, err := logrustash.NewHookWithFields("tcp", "127.0.0.1:9081", "go-gin-example", logrus.Fields{"appname": "gin"})
+	client, err := elastic.NewClient(elastic.SetURL("http://10.10.118.34:9200"))
+	if err != nil {
+		logrus.Panic(err)
+	}
+	hostname, err := os.Hostname()
 	if err != nil {
 		logrus.Fatal(err)
-	}*/
-	log := logrus.New()
-	/*log.Hooks.Add(logrustashHook)
-	log.WithField("name", "liuyongchao").Errorf("名字错了error")*/
-	client, err := elastic.NewClient(elastic.SetURL("http://127.0.0.1:9200"))
-	if err != nil {
-		log.Panic(err)
 	}
-	hook, err := elogrus.NewElasticHook(client, "127.0.0.1", logrus.DebugLevel, "mylog")
+
+	hook, err := elogrus.NewElasticHook(client, hostname, logrus.DebugLevel, "go-gin-example")
 	if err != nil {
-		log.Panic(err)
+		logrus.Panic(err)
 	}
-	log.Hooks.Add(hook)
-	log.WithField("name", "liuyongchao").Errorf("名字错了error")
+	logrus.AddHook(hook)
+	logrus.WithField("name", "liuyongchao").Errorf("名字错了error")
 	go func() {
 		for {
 			time.Sleep(5 * time.Second)
-			log.WithField("name", "liuyongchao").Errorf("名字错了error")
-			log.WithField("name", "liuyongchao").Info("名字错了info")
-			log.WithField("name", "liuyongchao").Debug("名字错了debug")
+			logrus.WithField("name", "liuyongchao").Errorf("名字错了error")
+			logrus.WithField("name", "liuyongchao").Info("名字错了info")
+			logrus.WithField("name", "liuyongchao").Debug("名字错了debug")
 		}
 	}()
 }
