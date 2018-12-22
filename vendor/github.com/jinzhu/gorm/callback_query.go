@@ -67,10 +67,10 @@ func queryCallback(scope *Scope) {
 				scope.db.RowsAffected++
 
 				elem := results
-
 				if isSlice {
 					elem = reflect.New(resultType).Elem()
 				}
+
 				scope.scan(rows, columns, scope.New(elem.Addr().Interface()).Fields())
 
 				if isSlice {
