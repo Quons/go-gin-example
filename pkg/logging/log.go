@@ -13,7 +13,11 @@ import (
 	"path/filepath"
 	"strconv"
 	"time"
+	//"github.com/bshuster-repo/logrus-logstash-hook"
+ "gopkg.in/sohlich/elogrus.v3"
+
 	"github.com/bshuster-repo/logrus-logstash-hook"
+	"github.com/olivere/elastic"
 )
 
 var logPath string
@@ -52,12 +56,22 @@ func Setup() {
 	//添加hook
 	logrus.AddHook(lfsHook)
 	/*logstash*/
-	logrustashHook, err := logrustash.NewHookWithFields("tcp", "127.0.0.1:9081", "go-gin-example", logrus.Fields{"appname": "gin"})
+	/*logrustashHook, err := logrustash.NewHookWithFields("tcp", "127.0.0.1:9081", "go-gin-example", logrus.Fields{"appname": "gin"})
 	if err != nil {
 		logrus.Fatal(err)
-	}
+	}*/
 	log := logrus.New()
-	log.Hooks.Add(logrustashHook)
+	/*log.Hooks.Add(logrustashHook)
+	log.WithField("name", "liuyongchao").Errorf("名字错了error")*/
+	client, err := elastic.NewClient(elastic.SetURL("http://127.0.0.1:9200"))
+	if err != nil {
+		log.Panic(err)
+	}
+	hook, err := elogrus.NewElasticHook(client, "127.0.0.1", logrus.DebugLevel, "mylog")
+	if err != nil {
+		log.Panic(err)
+	}
+	log.Hooks.Add(hook)
 	log.WithField("name", "liuyongchao").Errorf("名字错了error")
 	go func() {
 		for {
