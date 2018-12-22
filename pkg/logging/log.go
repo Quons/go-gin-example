@@ -53,7 +53,7 @@ func Setup() {
 	logrus.AddHook(lfsHook)
 
 	/*logstash*/
-	logrustashHook, err := logrustash.NewHook("tcp", "10.10.118.34:8081", "go-gin-example")
+	logrustashHook, err := logrustash.NewHook("tcp", "localhost:8081", "go-gin-example")
 	if err != nil {
 		logrus.Fatal(err)
 	}
