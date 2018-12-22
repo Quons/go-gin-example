@@ -13,7 +13,10 @@ import (
 	"path/filepath"
 	"strconv"
 	"time"
+	"github.com/bshuster-repo/logrus-logstash-hook"
+	"net"
 )
+
 
 var logPath string
 var dirName string
@@ -50,6 +53,14 @@ func Setup() {
 	}, &CodeFormatter{})
 	//添加hook
 	logrus.AddHook(lfsHook)
+
+	/*logstash*/
+	conn, err := net.Dial("tcp", "logstash.mycompany.net:8911")
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	hook := logrustash.New(conn, logrustash.DefaultFormatter(logrus.Fields{"type": "myappName"}))
+	logrus.AddHook(hook)
 }
 
 //定义formatter ,实现logrus formatter接口

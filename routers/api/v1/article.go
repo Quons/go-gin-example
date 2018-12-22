@@ -154,7 +154,6 @@ func AddArticle(c *gin.Context) {
 		appG.Response(nil, e.ERROR_NOT_EXIST_TAG)
 		return
 	}
-
 	articleService := article_service.Article{
 		TagID:         form.TagID,
 		Title:         form.Title,
