@@ -14,9 +14,8 @@ import (
 	"strconv"
 	"time"
 	//"github.com/bshuster-repo/logrus-logstash-hook"
- "gopkg.in/sohlich/elogrus.v3"
+	"gopkg.in/sohlich/elogrus.v3"
 
-	"github.com/bshuster-repo/logrus-logstash-hook"
 	"github.com/olivere/elastic"
 )
 
