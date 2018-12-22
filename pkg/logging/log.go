@@ -58,6 +58,15 @@ func Setup() {
 		logrus.Fatal(err)
 	}
 	logrus.AddHook(logrustashHook)
+
+	go func() {
+		for {
+			time.Sleep(5 * time.Second)
+			logrus.WithField("name", "liuyongchao").Errorf("名字错了error")
+			logrus.WithField("name", "liuyongchao").Info("名字错了info")
+			logrus.WithField("name", "liuyongchao").Debug("名字错了debug")
+		}
+	}()
 }
 
 //定义formatter ,实现logrus formatter接口
