@@ -34,7 +34,7 @@ func init() {
 // @description An example of gin
 // @termsOfService https://github.com/Quons/go-gin-example
 
-// @license.name MITs
+// @license.name MITd
 // @license.url https://github.com/Quons/go-gin-example/blob/master/LICENSE
 func main() {
 	routersInit := routers.InitRouter()
