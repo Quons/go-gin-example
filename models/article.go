@@ -6,6 +6,7 @@ import (
 	"sort"
 )
 
+//Article 文章
 type Article struct {
 	Model
 
@@ -14,7 +15,7 @@ type Article struct {
 	Tag           Tag
 	Desc          string `gorm:"column:desc"`
 	Content       string `gorm:"column:content"`
-	CoverImageUrl string `gorm:"column:cover_image_url"`
+	CoverImageURL string `gorm:"column:cover_image_url"`
 	CreatedBy     string `gorm:"column:created_by"`
 	ModifiedBy    string `gorm:"column:modified_by"`
 	State         int    `gorm:"column:state"`
@@ -100,7 +101,7 @@ func AddArticleTrans(tx *gorm.DB, data map[string]interface{}) error {
 		Content:       data["content"].(string),
 		CreatedBy:     data["created_by"].(string),
 		State:         data["state"].(int),
-		CoverImageUrl: data["cover_image_url"].(string),
+		CoverImageURL: data["cover_image_url"].(string),
 	}
 	if err := tx.Create(&article).Error; err != nil {
 		return err

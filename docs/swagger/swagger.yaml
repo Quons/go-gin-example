@@ -1,4 +1,14 @@
 basePath: '{{.BasePath}}'
+definitions:
+  vo.CourseVo:
+    properties:
+      courseId:
+        type: integer
+      courseImage:
+        type: string
+      courseName:
+        type: string
+    type: object
 host: '{{.Host}}'
 info:
   contact: {}
@@ -27,6 +37,10 @@ paths:
         in: query
         name: tag_id
         type: integer
+      - description: Token
+        in: query
+        name: token
+        type: string
       - description: State
         in: query
         name: state
@@ -106,6 +120,8 @@ paths:
           schema:
             type: string
       summary: 获取单个文章
+      tags:
+      - 文章
     put:
       parameters:
       - {}
@@ -142,99 +158,41 @@ paths:
           schema:
             type: string
       summary: 修改文章
-  /api/v1/tags:
-    get:
-      parameters:
-      - description: Name
-        in: query
-        name: name
-        type: string
-      - description: State
-        in: query
-        name: state
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"code":200,"data":{"lists":[{"id":3,"created_on":1516849721,"modified_on":0,"name":"3333","created_by":"4555","modified_by":"","state":0}],"total":29},"msg":"ok"}'
-          schema:
-            type: string
-      summary: 获取多个文章标签
+  /api/v1/getCourse:
     post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: 获取单个课程description
       parameters:
-      - description: Name
-        in: query
-        name: name
+      - description: 用户token
+        in: formData
+        name: token
         required: true
         type: string
-      - description: State
-        in: query
-        name: state
+      - description: 课程ID
+        in: formData
+        name: courseId
+        required: true
         type: integer
-      - description: CreatedBy
-        in: query
-        name: created_by
-        type: string
       produces:
       - application/json
       responses:
         "200":
-          description: '{"code":200,"data":{},"msg":"ok"}'
+          description: OK
+          schema:
+            $ref: '#/definitions/vo.CourseVo'
+            type: object
+        "10000":
+          description: '{"code":10000,"data":{},"msg":"服务器错误"}'
           schema:
             type: string
-      summary: 新增文章标签
-  /api/v1/tags/{id}:
-    delete:
-      parameters:
-      - {}
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"code":200,"data":{},"msg":"ok"}'
+        "20000":
+          description: '{"code":20000,"data":{},"msg":"参数错误"}'
           schema:
             type: string
-      summary: 删除文章标签
-    put:
-      parameters:
-      - {}
-      - description: ID
-        in: query
-        name: name
-        required: true
-        type: string
-      - description: State
-        in: query
-        name: state
-        type: integer
-      - description: ModifiedBy
-        in: query
-        name: modified_by
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"code":200,"data":{},"msg":"ok"}'
-          schema:
-            type: string
-      summary: 修改文章标签
-  /api/v1/tags/export:
-    post:
-      parameters:
-      - {}
-      - {}
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: '{"code":200,"data":{"export_save_url":"export/abc.xlsx", "export_url":
-            "http://..."},"msg":"ok"}'
-          schema:
-            type: string
-      summary: 导出文章标签
+      summary: 获取单个课程
+      tags:
+      - 课程
   /api/v1/tags/import:
     post:
       parameters:

@@ -4,11 +4,11 @@ import (
 	"log"
 	"time"
 
+	"github.com/Quons/go-gin-example/pkg/file"
 	"github.com/go-ini/ini"
 	"github.com/sirupsen/logrus"
-	"github.com/Quons/go-gin-example/pkg/file"
-	"path/filepath"
 	"os"
+	"path/filepath"
 )
 
 type App struct {
@@ -26,10 +26,6 @@ type App struct {
 	QrCodeSavePath string
 	FontSavePath   string
 
-	/*LogSavePath string
-	LogSaveName string
-	LogFileExt  string
-	TimeFormat  string*/
 	LogLevel string
 }
 
@@ -37,7 +33,7 @@ var AppSetting = &App{}
 
 type Server struct {
 	RunMode      string
-	HttpPort     string
+	HttpPort     int
 	ReadTimeout  time.Duration
 	WriteTimeout time.Duration
 }
@@ -64,9 +60,21 @@ type Redis struct {
 	MaxIdle     int
 	MaxActive   int
 	IdleTimeout time.Duration
+	Prefix      string
 }
 
 var RedisSetting = &Redis{}
+
+type UserCenterSetting struct {
+	ConfigUrl1             string `ini:"getConfigUrl1"`
+	ConfigUrl2             string `ini:"getConfigUrl2"`
+	GetStudentByTokenUrl   string `ini:"getStudentByTokenUrl"`
+	GetTokenByStudentIdUrl string `ini:"getTokenByStudentIdUrl"`
+	WeChatCreateStudentUrl string `ini:"weChatCreateStudentUrl"`
+	WeChatLoginUrl         string `ini:"weChatLoginUrl"`
+}
+
+var UserCenter = &UserCenterSetting{}
 
 var cfg *ini.File
 
@@ -103,6 +111,7 @@ func Setup(runmode string) {
 	mapTo("server", ServerSetting)
 	mapTo("database", DatabaseSetting)
 	mapTo("redis", RedisSetting)
+	mapTo("userCenter", UserCenter)
 
 	AppSetting.ImageMaxSize = AppSetting.ImageMaxSize * 1024 * 1024
 	ServerSetting.ReadTimeout = ServerSetting.ReadTimeout * time.Second

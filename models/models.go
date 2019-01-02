@@ -7,11 +7,12 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 
-	"github.com/Quons/go-gin-example/pkg/setting"
-	"time"
-	"strings"
-	"math/rand"
 	"github.com/Quons/go-gin-example/pkg/logging"
+	"github.com/Quons/go-gin-example/pkg/setting"
+	"github.com/sirupsen/logrus"
+	"math/rand"
+	"strings"
+	"time"
 )
 
 var wdb *gorm.DB
@@ -25,6 +26,10 @@ type Model struct {
 }
 
 func Setup() {
+	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
+		return setting.DatabaseSetting.TablePrefix + defaultTableName
+	}
+
 	var err error
 	wdb, err = gorm.Open(setting.DatabaseSetting.Type, fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=True&loc=Local&timeout=5s",
 		setting.DatabaseSetting.WUser,
@@ -33,18 +38,16 @@ func Setup() {
 		setting.DatabaseSetting.Name))
 
 	if err != nil {
-		log.Println(err)
+		logrus.Error(err)
 	}
 
-	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
-		return setting.DatabaseSetting.TablePrefix + defaultTableName
-	}
 	wdb.LogMode(true)
 	wdb.SetLogger(log.New(logging.GetGinLogWriter(), "[GORM] ", log.Ldate))
+	// 全局禁用表名复数,默认表名为结构体复数
 	wdb.SingularTable(true)
-	wdb.Callback().Create().Replace("gorm:update_time_stamp", updateTimeStampForCreateCallback)
-	wdb.Callback().Update().Replace("gorm:update_time_stamp", updateTimeStampForUpdateCallback)
-	wdb.Callback().Delete().Replace("gorm:delete", deleteCallback)
+	//wdb.Callback().Create().Replace("gorm:update_time_stamp", updateTimeStampForCreateCallback)
+	//wdb.Callback().Update().Replace("gorm:update_time_stamp", updateTimeStampForUpdateCallback)
+	//wdb.Callback().Delete().Replace("gorm:delete", deleteCallback)
 	wdb.DB().SetMaxIdleConns(10)
 	wdb.DB().SetMaxOpenConns(100)
 
@@ -57,14 +60,11 @@ func Setup() {
 			setting.DatabaseSetting.Name))
 
 		if err != nil {
-			log.Println(err)
-		}
-
-		gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
-			return setting.DatabaseSetting.TablePrefix + defaultTableName
+			logrus.Error(err)
 		}
 		rdb.LogMode(true)
 		rdb.SetLogger(log.New(logging.GetGinLogWriter(), "[GORM] ", log.Ldate))
+		// 全局禁用表名复数，默认表名为结构体复数
 		rdb.SingularTable(true)
 		rdb.DB().SetMaxIdleConns(10)
 		rdb.DB().SetMaxOpenConns(100)

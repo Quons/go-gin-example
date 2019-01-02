@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"net/http"
-
 	"github.com/Unknwon/com"
 	"github.com/astaxie/beego/validation"
 	"github.com/boombuler/barcode/qr"
@@ -18,6 +16,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// @Tags 文章
 // @Summary 获取单个文章
 // @Produce  json
 // @Param id param int true "ID"
@@ -31,33 +30,34 @@ func GetArticle(c *gin.Context) {
 
 	if valid.HasErrors() {
 		app.MarkErrors(valid.Errors)
-		appG.Response(http.StatusOK, e.INVALID_PARAMS, nil)
+		appG.Response(nil, e.ERROR_INVALID_PARAMS)
 		return
 	}
 
 	articleService := article_service.Article{ID: id}
 	exists, err := articleService.ExistByID()
 	if err != nil {
-		appG.Response(http.StatusOK, e.ERROR_CHECK_EXIST_ARTICLE_FAIL, nil)
+		appG.Response(nil, e.ERROR_CHECK_EXIST_ARTICLE_FAIL)
 		return
 	}
 	if !exists {
-		appG.Response(http.StatusOK, e.ERROR_NOT_EXIST_ARTICLE, nil)
+		appG.Response(nil, e.ERROR_NOT_EXIST_ARTICLE)
 		return
 	}
 
 	article, err := articleService.Get()
 	if err != nil {
-		appG.Response(http.StatusOK, e.ERROR_GET_ARTICLE_FAIL, nil)
+		appG.Response(nil, e.ERROR_GET_ARTICLE_FAIL)
 		return
 	}
 
-	appG.Response(http.StatusOK, e.SUCCESS, article)
+	appG.Response(article, e.SUCCESS)
 }
 
 // @Summary 获取多个文章
 // @Produce  json
 // @Param tag_id query int false "TagID"
+// @Param token query string false "Token"
 // @Param state query int false "State"
 // @Param created_by query int false "CreatedBy"
 // @Success 200 {string} json "{"code":200,"data":[{"id":3,"created_on":1516937037,"modified_on":0,"tag_id":11,"tag":{"id":11,"created_on":1516851591,"modified_on":0,"name":"312321","created_by":"4555","modified_by":"","state":1},"content":"5555","created_by":"2412","modified_by":"","state":1}],"msg":"ok"}"
@@ -65,27 +65,28 @@ func GetArticle(c *gin.Context) {
 func GetArticles(c *gin.Context) {
 	appG := app.Gin{C: c}
 	valid := validation.Validation{}
-
+	studentID := c.GetInt64("studentId")
+	logrus.Errorf("studentId:%v,exist:%v", studentID)
 	arg := c.Query("state")
 	logrus.Info("......arg:" + arg)
 	state := com.StrTo(arg).MustInt()
 	logrus.Infof("......state:%v", state)
 	valid.Range(state, 0, 1, "state").Message("状态只允许0或1")
 
-	tagId := -1
+	tagID := -1
 	if arg := c.PostForm("tag_id"); arg != "" {
-		tagId = com.StrTo(arg).MustInt()
-		valid.Min(tagId, 1, "tag_id").Message("标签ID必须大于0")
+		tagID = com.StrTo(arg).MustInt()
+		valid.Min(tagID, 1, "tag_id").Message("标签ID必须大于0")
 	}
 
 	if valid.HasErrors() {
 		app.MarkErrors(valid.Errors)
-		appG.Response(http.StatusOK, e.INVALID_PARAMS, nil)
+		appG.Response(nil, e.ERROR_INVALID_PARAMS)
 		return
 	}
 
 	articleService := article_service.Article{
-		TagID:    tagId,
+		TagID:    tagID,
 		State:    state,
 		PageNum:  util.GetPage(c),
 		PageSize: setting.AppSetting.PageSize,
@@ -93,13 +94,13 @@ func GetArticles(c *gin.Context) {
 
 	total, err := articleService.Count()
 	if err != nil {
-		appG.Response(http.StatusOK, e.ERROR_COUNT_ARTICLE_FAIL, nil)
+		appG.Response(nil, e.ERROR_COUNT_ARTICLE_FAIL)
 		return
 	}
 
 	articles, err := articleService.GetAll()
 	if err != nil {
-		appG.Response(http.StatusOK, e.ERROR_GET_ARTICLES_FAIL, nil)
+		appG.Response(nil, e.ERROR_GET_ARTICLES_FAIL)
 		return
 	}
 
@@ -107,7 +108,7 @@ func GetArticles(c *gin.Context) {
 	data["lists"] = articles
 	data["total"] = total
 
-	appG.Response(http.StatusOK, e.SUCCESS, data)
+	appG.Response(data, e.SUCCESS)
 }
 
 type AddArticleForm struct {
@@ -116,7 +117,7 @@ type AddArticleForm struct {
 	Desc          string `form:"desc" valid:"Required;MaxSize(255)"`
 	Content       string `form:"content" valid:"Required;MaxSize(65535)"`
 	CreatedBy     string `form:"created_by" valid:"Required;MaxSize(100)"`
-	CoverImageUrl string `form:"cover_image_url" valid:"Required;MaxSize(255)"`
+	CoverImageURL string `form:"cover_image_url" valid:"Required;MaxSize(255)"`
 	State         int    `form:"state" valid:"Range(0,1)"`
 }
 
@@ -138,37 +139,36 @@ func AddArticle(c *gin.Context) {
 
 	httpCode, errCode := app.BindAndValid(c, &form)
 	if errCode != e.SUCCESS {
-		appG.Response(httpCode, errCode, nil)
+		appG.Response(nil, errCode, httpCode)
 		return
 	}
 
 	tagService := tag_service.Tag{ID: form.TagID}
 	exists, err := tagService.ExistByID()
 	if err != nil {
-		appG.Response(http.StatusOK, e.ERROR_EXIST_TAG_FAIL, nil)
+		appG.Response(nil, e.ERROR_EXIST_TAG_FAIL)
 		return
 	}
 
 	if !exists {
-		appG.Response(http.StatusOK, e.ERROR_NOT_EXIST_TAG, nil)
+		appG.Response(nil, e.ERROR_NOT_EXIST_TAG)
 		return
 	}
-
 	articleService := article_service.Article{
 		TagID:         form.TagID,
 		Title:         form.Title,
 		Desc:          form.Desc,
 		Content:       form.Content,
-		CoverImageUrl: form.CoverImageUrl,
+		CoverImageUrl: form.CoverImageURL,
 		State:         form.State,
 	}
 
 	if err := articleService.Add(); err != nil {
-		appG.Response(http.StatusOK, e.ERROR_ADD_ARTICLE_FAIL, nil)
+		appG.Response(nil, e.ERROR_ADD_ARTICLE_FAIL)
 		return
 	}
 
-	appG.Response(http.StatusOK, e.SUCCESS, nil)
+	appG.Response(nil, e.SUCCESS)
 }
 
 // @Summary 新增文章和标签
@@ -179,9 +179,10 @@ func AddArticleAndTag(c *gin.Context) {
 	var appG = app.Gin{C: c}
 	a := &article_service.Article{TagID: 1, Title: "testArticle", Desc: "hiahia", Content: "testContent", CreatedBy: "quon", CoverImageUrl: "http"}
 	a.AddArticleAndTag()
-	appG.Response(http.StatusOK, e.SUCCESS, nil)
+	appG.Response(nil, e.SUCCESS)
 }
 
+/*EditArticleForm 编辑*/
 type EditArticleForm struct {
 	ID            int    `form:"id" valid:"Required;Min(1)"`
 	TagID         int    `form:"tag_id" valid:"Required;Min(1)"`
@@ -189,7 +190,7 @@ type EditArticleForm struct {
 	Desc          string `form:"desc" valid:"Required;MaxSize(255)"`
 	Content       string `form:"content" valid:"Required;MaxSize(65535)"`
 	ModifiedBy    string `form:"modified_by" valid:"Required;MaxSize(100)"`
-	CoverImageUrl string `form:"cover_image_url" valid:"Required;MaxSize(255)"`
+	CoverImageURL string `form:"cover_image_url" valid:"Required;MaxSize(255)"`
 	State         int    `form:"state" valid:"Range(0,1)"`
 }
 
@@ -213,7 +214,7 @@ func EditArticle(c *gin.Context) {
 	logrus.Infof(",c:%+v", c)
 	httpCode, errCode := app.BindAndValid(c, &form)
 	if errCode != e.SUCCESS {
-		appG.Response(httpCode, errCode, nil)
+		appG.Response(nil, errCode, httpCode)
 		return
 	}
 
@@ -223,39 +224,39 @@ func EditArticle(c *gin.Context) {
 		Title:         form.Title,
 		Desc:          form.Desc,
 		Content:       form.Content,
-		CoverImageUrl: form.CoverImageUrl,
+		CoverImageUrl: form.CoverImageURL,
 		ModifiedBy:    form.ModifiedBy,
 		State:         form.State,
 	}
 	exists, err := articleService.ExistByID()
 	if err != nil {
-		appG.Response(http.StatusOK, e.ERROR_CHECK_EXIST_ARTICLE_FAIL, nil)
+		appG.Response(nil, e.ERROR_CHECK_EXIST_ARTICLE_FAIL)
 		return
 	}
 	if !exists {
-		appG.Response(http.StatusOK, e.ERROR_NOT_EXIST_ARTICLE, nil)
+		appG.Response(nil, e.ERROR_NOT_EXIST_ARTICLE)
 		return
 	}
 
 	tagService := tag_service.Tag{ID: form.TagID}
 	exists, err = tagService.ExistByID()
 	if err != nil {
-		appG.Response(http.StatusOK, e.ERROR_EXIST_TAG_FAIL, nil)
+		appG.Response(nil, e.ERROR_EXIST_TAG_FAIL)
 		return
 	}
 
 	if !exists {
-		appG.Response(http.StatusOK, e.ERROR_NOT_EXIST_TAG, nil)
+		appG.Response(nil, e.ERROR_NOT_EXIST_TAG)
 		return
 	}
 
 	err = articleService.Edit()
 	if err != nil {
-		appG.Response(http.StatusOK, e.ERROR_EDIT_ARTICLE_FAIL, nil)
+		appG.Response(nil, e.ERROR_EDIT_ARTICLE_FAIL)
 		return
 	}
 
-	appG.Response(http.StatusOK, e.SUCCESS, nil)
+	appG.Response(nil, e.SUCCESS)
 }
 
 // @Summary 删除文章
@@ -272,38 +273,38 @@ func DeleteArticle(c *gin.Context) {
 
 	if valid.HasErrors() {
 		app.MarkErrors(valid.Errors)
-		appG.Response(http.StatusOK, e.INVALID_PARAMS, nil)
+		appG.Response(nil, e.ERROR_INVALID_PARAMS)
 		return
 	}
 
 	articleService := article_service.Article{ID: id}
 	exists, err := articleService.ExistByID()
 	if err != nil {
-		appG.Response(http.StatusOK, e.ERROR_CHECK_EXIST_ARTICLE_FAIL, nil)
+		appG.Response(nil, e.ERROR_CHECK_EXIST_ARTICLE_FAIL)
 		return
 	}
 	if !exists {
-		appG.Response(http.StatusOK, e.ERROR_NOT_EXIST_ARTICLE, nil)
+		appG.Response(nil, e.ERROR_NOT_EXIST_ARTICLE)
 		return
 	}
 
 	err = articleService.Delete()
 	if err != nil {
-		appG.Response(http.StatusOK, e.ERROR_DELETE_ARTICLE_FAIL, nil)
+		appG.Response(nil, e.ERROR_DELETE_ARTICLE_FAIL)
 		return
 	}
 
-	appG.Response(http.StatusOK, e.SUCCESS, nil)
+	appG.Response(nil, e.SUCCESS)
 }
 
 const (
-	QRCODE_URL = "https://github.com/Quons/blog#gin%E7%B3%BB%E5%88%97%E7%9B%AE%E5%BD%95"
+	QrCodeURL = "https://github.com/Quons/blog#gin%E7%B3%BB%E5%88%97%E7%9B%AE%E5%BD%95"
 )
 
 func GenerateArticlePoster(c *gin.Context) {
 	appG := app.Gin{C: c}
 	article := &article_service.Article{}
-	qr := qrcode.NewQrCode(QRCODE_URL, 300, 300, qr.M, qr.Auto)
+	qr := qrcode.NewQrCode(QrCodeURL, 300, 300, qr.M, qr.Auto)
 	posterName := article_service.GetPosterFlag() + "-" + qrcode.GetQrCodeFileName(qr.URL) + qr.GetQrCodeExt()
 	articlePoster := article_service.NewArticlePoster(posterName, article, qr)
 	articlePosterBgService := article_service.NewArticlePosterBg(
@@ -323,12 +324,12 @@ func GenerateArticlePoster(c *gin.Context) {
 
 	_, filePath, err := articlePosterBgService.Generate()
 	if err != nil {
-		appG.Response(http.StatusOK, e.ERROR_GEN_ARTICLE_POSTER_FAIL, nil)
+		appG.Response(nil, e.ERROR_GEN_ARTICLE_POSTER_FAIL)
 		return
 	}
 
-	appG.Response(http.StatusOK, e.SUCCESS, map[string]string{
+	appG.Response(map[string]string{
 		"poster_url":      qrcode.GetQrCodeFullUrl(posterName),
 		"poster_save_url": filePath + posterName,
-	})
+	}, e.SUCCESS)
 }

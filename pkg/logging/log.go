@@ -1,18 +1,23 @@
 package logging
 
 import (
-	"github.com/Quons/go-gin-example/pkg/file"
-	"github.com/pkg/errors"
-	"time"
-	"path/filepath"
-	"github.com/lestrrat/go-file-rotatelogs"
-	"github.com/sirupsen/logrus"
-	"github.com/rifflock/lfshook"
-	"github.com/Quons/go-gin-example/pkg/setting"
 	"bytes"
-	"strconv"
 	"fmt"
+	"github.com/Quons/go-gin-example/pkg/file"
+	"github.com/Quons/go-gin-example/pkg/setting"
 	"github.com/gin-gonic/gin/json"
+	"github.com/lestrrat/go-file-rotatelogs"
+	"github.com/pkg/errors"
+	"github.com/rifflock/lfshook"
+	"github.com/sirupsen/logrus"
+	"path/filepath"
+	"strconv"
+	"time"
+	//"github.com/bshuster-repo/logrus-logstash-hook"
+	"gopkg.in/sohlich/elogrus.v3"
+
+	"github.com/olivere/elastic"
+	"os"
 )
 
 var logPath string
@@ -21,7 +26,7 @@ var dirName string
 func Setup() {
 	//获取执行目录
 	var err error
-	logPath, err = file.MkRdir("log")
+	logPath, err = file.MkRdir("logs")
 	if err != nil {
 		logrus.Fatal("get log path error")
 	}
@@ -36,7 +41,7 @@ func Setup() {
 	}
 	logrus.SetLevel(logLevel)
 	//打印行号，funcName
-	//logrus.SetReportCaller(true)
+	logrus.SetReportCaller(true)
 	//输出设置
 	writer := GetLogrusWriter()
 	//设置local file system hook
@@ -50,6 +55,29 @@ func Setup() {
 	}, &CodeFormatter{})
 	//添加hook
 	logrus.AddHook(lfsHook)
+	client, err := elastic.NewClient(elastic.SetURL("http://10.10.118.34:9200"),elastic.SetSniff(false))
+	if err != nil {
+		logrus.Panic(err)
+	}
+	hostname, err := os.Hostname()
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	hook, err := elogrus.NewAsyncElasticHook(client, hostname, logrus.DebugLevel, "go-gin-example")
+	if err != nil {
+		logrus.Panic(err)
+	}
+	logrus.AddHook(hook)
+	logrus.WithField("name", "liuyongchao").Errorf("名字错了error")
+	go func() {
+		for {
+			time.Sleep(5 * time.Second)
+			logrus.WithField("name", "liuyongchao").Errorf("名字错了error")
+			logrus.WithField("name", "liuyongchao").Info("名字错了info")
+			logrus.WithField("name", "liuyongchao").Debug("名字错了debug")
+		}
+	}()
 }
 
 //定义formatter ,实现logrus formatter接口
@@ -88,7 +116,7 @@ func (f *CodeFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 }
 
 func GetLogrusWriter() *rotatelogs.RotateLogs {
-	logrusPath, err := file.MkRdir("log/" + dirName)
+	logrusPath, err := file.MkRdir("logs/" + dirName)
 	if err != nil {
 		logrus.Fatal("get log path error")
 	}
@@ -106,7 +134,7 @@ func GetLogrusWriter() *rotatelogs.RotateLogs {
 
 //获取gin日志writer
 func GetGinLogWriter() *rotatelogs.RotateLogs {
-	ginLogPath, err := file.MkRdir("log/gin")
+	ginLogPath, err := file.MkRdir("logs/gin")
 	if err != nil {
 		logrus.Fatal("get log path error")
 	}

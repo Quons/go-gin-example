@@ -1,13 +1,11 @@
 package article_service
 
 import (
-	"encoding/json"
-
-	"github.com/Quons/go-gin-example/models"
-	"github.com/Quons/go-gin-example/pkg/gredis"
-	"github.com/Quons/go-gin-example/service/cache_service"
-	"github.com/sirupsen/logrus"
 	"fmt"
+	"github.com/Quons/go-gin-example/models"
+	. "github.com/Quons/go-gin-example/pkg/e"
+	"github.com/Quons/go-gin-example/pkg/gredis"
+	"github.com/sirupsen/logrus"
 )
 
 type Article struct {
@@ -70,7 +68,6 @@ func (a *Article) AddArticleAndTag() {
 		fmt.Printf(err.Error())
 		return
 	}
-	panic("fdfdfdf")
 	//添加标签
 	if err := models.AddTagTrans(tx, "testTag", 1, "quons"); err != nil {
 		tx.Rollback()
@@ -97,18 +94,9 @@ func (a *Article) Edit() error {
 }
 
 func (a *Article) Get() (*models.Article, error) {
-	var cacheArticle *models.Article
-
-	cache := cache_service.Article{ID: a.ID}
-	key := cache.GetArticleKey()
-	if gredis.Exists(key) {
-		data, err := gredis.Get(key)
-		if err != nil {
-			logrus.Error(err)
-		} else {
-			json.Unmarshal(data, &cacheArticle)
-			return cacheArticle, nil
-		}
+	var article *models.Article
+	if gredis.Get(article, CACHE_ARTICLE, a.ID) {
+		return article, nil
 	}
 
 	article, err := models.GetArticle(a.ID)
@@ -116,31 +104,15 @@ func (a *Article) Get() (*models.Article, error) {
 		return nil, err
 	}
 
-	gredis.Set(key, article, 3600)
+	gredis.Set(article, CACHE_ARTICLE_TIME, CACHE_TAG, article.ID)
 	return article, nil
 }
 
 func (a *Article) GetAll() (models.Articles, error) {
-	var (
-		articles, cacheArticles models.Articles
-	)
+	var articles models.Articles
 
-	cache := cache_service.Article{
-		TagID: a.TagID,
-		State: a.State,
-
-		PageNum:  a.PageNum,
-		PageSize: a.PageSize,
-	}
-	key := cache.GetArticlesKey()
-	if gredis.Exists(key) {
-		data, err := gredis.Get(key)
-		if err != nil {
-			logrus.Info(err)
-		} else {
-			json.Unmarshal(data, &cacheArticles)
-			return cacheArticles, nil
-		}
+	if gredis.Get(&articles, CACHE_ARTICLE_LIST, a.TagID, a.State, a.PageNum, a.PageNum) {
+		return articles, nil
 	}
 
 	articles, err := models.GetArticles(a.PageNum, a.PageSize, a.getMaps())
@@ -148,7 +120,7 @@ func (a *Article) GetAll() (models.Articles, error) {
 		return nil, err
 	}
 
-	gredis.Set(key, articles, 3600)
+	gredis.Set(articles, CACHE_ARTICLE_TIME, CACHE_ARTICLE_LIST, a.TagID, a.State, a.PageNum, a.PageNum)
 	return articles, nil
 }
 

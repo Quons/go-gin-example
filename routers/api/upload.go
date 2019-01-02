@@ -1,8 +1,6 @@
 package api
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 
 	"github.com/Quons/go-gin-example/pkg/app"
@@ -21,12 +19,12 @@ func UploadImage(c *gin.Context) {
 	file, image, err := c.Request.FormFile("image")
 	if err != nil {
 		logrus.Warn(err)
-		appG.Response(http.StatusOK, e.ERROR, nil)
+		appG.Response(nil, e.ERROR)
 		return
 	}
 
 	if image == nil {
-		appG.Response(http.StatusOK, e.INVALID_PARAMS, nil)
+		appG.Response(nil, e.ERROR_INVALID_PARAMS)
 		return
 	}
 
@@ -36,25 +34,25 @@ func UploadImage(c *gin.Context) {
 	src := fullPath + imageName
 
 	if !upload.CheckImageExt(imageName) || !upload.CheckImageSize(file) {
-		appG.Response(http.StatusOK, e.ERROR_UPLOAD_CHECK_IMAGE_FORMAT, nil)
+		appG.Response(nil, e.ERROR_UPLOAD_CHECK_IMAGE_FORMAT)
 		return
 	}
 
 	err = upload.CheckImage(fullPath)
 	if err != nil {
 		logrus.Warn(err)
-		appG.Response(http.StatusOK, e.ERROR_UPLOAD_CHECK_IMAGE_FAIL, nil)
+		appG.Response(nil, e.ERROR_UPLOAD_CHECK_IMAGE_FAIL)
 		return
 	}
 
 	if err := c.SaveUploadedFile(image, src); err != nil {
 		logrus.Warn(err)
-		appG.Response(http.StatusOK, e.ERROR_UPLOAD_SAVE_IMAGE_FAIL, nil)
+		appG.Response(nil, e.ERROR_UPLOAD_SAVE_IMAGE_FAIL)
 		return
 	}
 
-	appG.Response(http.StatusOK, e.SUCCESS, map[string]string{
+	appG.Response(map[string]string{
 		"image_url":      upload.GetImageFullUrl(imageName),
 		"image_save_url": savePath + imageName,
-	})
+	}, e.SUCCESS)
 }

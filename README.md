@@ -121,6 +121,10 @@ https://github.com/swaggo/gin-swagger
 go get -u github.com/swaggo/swag/cmd/swag
 官方包安装参考上一条
 
+##请求数据验证
+gin内置验证器为go-playground
+https://github.com/go-playground/validator
+
 #todo gorm 关联查询sql语句测试
 #缓存使用
 #包复用测试
@@ -128,3 +132,5 @@ go get -u github.com/swaggo/swag/cmd/swag
 #response封装
 #vendor dep优势
 #单元测试
+
+#todo mockito

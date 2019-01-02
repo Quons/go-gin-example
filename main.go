@@ -1,49 +1,53 @@
 package main
 
 import (
+	"context"
+	"flag"
 	"fmt"
-	"net/http"
-	"runtime"
-	"syscall"
-
-	"github.com/fvbock/endless"
-
 	"github.com/Quons/go-gin-example/models"
 	"github.com/Quons/go-gin-example/pkg/gredis"
 	"github.com/Quons/go-gin-example/pkg/logging"
 	"github.com/Quons/go-gin-example/pkg/setting"
 	"github.com/Quons/go-gin-example/routers"
+	"github.com/gin-contrib/cors"
 	"github.com/sirupsen/logrus"
-	"flag"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"runtime"
+	"time"
 )
 
-var log = logrus.New()
+func init() {
+	var runmode string
+	flag.StringVar(&runmode, "runmode", "dev", "runmode:dev,test,pre,prod;default dev mode")
+	flag.Parse()
+	setting.Setup(runmode)
+	logging.Setup()
+	models.Setup()
+	gredis.Setup()
+}
+
 // @title Golang Gin API
 // @version 1.0
 // @description An example of gin
 // @termsOfService https://github.com/Quons/go-gin-example
 
-// @license.name MIT
+// @license.name MIDs
 // @license.url https://github.com/Quons/go-gin-example/blob/master/LICENSE
 func main() {
-	var runmode string
-	flag.StringVar(&runmode, "runmode", "dev", "runmode:dev,test,pre,prod;default dev mode")
-	flag.Parse()
-
-	logrus.Info(fmt.Sprintf("%c[1;%v;32m %s %c[0m", 0x1B, 43, "INFO", 0x1B))
-	setting.Setup(runmode)
-	logging.Setup()
-	models.Setup()
-	gredis.Setup()
-	logrus.Debug("...Debug log")
-	logrus.Info("...Info log")
-	logrus.Warn("...Warn log")
-	logrus.Error("...Error log")
-	logrus.WithFields(logrus.Fields{
-		"name": "quon",
-		"age":  12,
-	}).Info("with field info log")
 	routersInit := routers.InitRouter()
+
+	//跨域请求设置
+	corsConfig := cors.Config{
+		AllowAllOrigins:  true,
+		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Authorization", "Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Content-Type"},
+		ExposeHeaders:    []string{"Content-Length", "Access-Control-Allow-Origin", "Access-Control-Allow-Headers", "Content-Type"},
+		AllowCredentials: true,
+	}
+	routersInit.Use(cors.New(corsConfig))
 	readTimeout := setting.ServerSetting.ReadTimeout
 	writeTimeout := setting.ServerSetting.WriteTimeout
 	endPoint := fmt.Sprintf(":%d", setting.ServerSetting.HttpPort)
@@ -57,21 +61,35 @@ func main() {
 			WriteTimeout:   writeTimeout,
 			MaxHeaderBytes: maxHeaderBytes,
 		}
-
 		server.ListenAndServe()
 		return
 	}
-
-	endless.DefaultReadTimeOut = readTimeout
-	endless.DefaultWriteTimeOut = writeTimeout
-	endless.DefaultMaxHeaderBytes = maxHeaderBytes
-	server := endless.NewServer(endPoint, routersInit)
-	server.BeforeBegin = func(add string) {
-		log.Printf("Actual pid is %d", syscall.Getpid())
+	//服务器设置
+	srv := &http.Server{
+		Addr:           endPoint,
+		Handler:        routersInit,
+		ErrorLog:       log.New(logging.GetLogrusWriter(), "server err:", log.LstdFlags),
+		ReadTimeout:    readTimeout,
+		WriteTimeout:   writeTimeout,
+		MaxHeaderBytes: maxHeaderBytes,
 	}
-
-	err := server.ListenAndServe()
-	if err != nil {
-		log.Printf("Server err: %v", err)
+	go func() {
+		// service connections
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			logrus.Fatalf("listen: %s\n", err)
+		}
+	}()
+	logrus.Info("server started")
+	//平滑重启设置
+	//Wait for interrupt signal to gracefully shutdown the server with a timeout of 5 seconds.
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+	logrus.Println("Shutdown Server ...")
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	if err := srv.Shutdown(ctx); err != nil {
+		logrus.Fatal("Server Shutdown:", err)
 	}
+	logrus.Println("Server exiting")
 }
