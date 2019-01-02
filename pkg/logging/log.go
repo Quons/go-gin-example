@@ -55,7 +55,7 @@ func Setup() {
 	}, &CodeFormatter{})
 	//添加hook
 	logrus.AddHook(lfsHook)
-	client, err := elastic.NewClient(elastic.SetURL("http://10.10.118.34:9200"))
+	client, err := elastic.NewClient(elastic.SetURL("http://10.10.118.34:9200"),elastic.SetSniff(false))
 	if err != nil {
 		logrus.Panic(err)
 	}
@@ -64,7 +64,7 @@ func Setup() {
 		logrus.Fatal(err)
 	}
 
-	hook, err := elogrus.NewElasticHook(client, hostname, logrus.DebugLevel, "go-gin-example")
+	hook, err := elogrus.NewAsyncElasticHook(client, hostname, logrus.DebugLevel, "go-gin-example")
 	if err != nil {
 		logrus.Panic(err)
 	}
