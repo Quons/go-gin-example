@@ -64,7 +64,7 @@ func Setup() {
 		logrus.Fatal(err)
 	}
 
-	hook, err := elogrus.NewAsyncElasticHook(client, hostname, logrus.DebugLevel, "go-gin-example")
+	hook, err := elogrus.NewElasticHook(client, hostname, logrus.DebugLevel, "go-gin-example")
 	if err != nil {
 		logrus.Panic(err)
 	}
