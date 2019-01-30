@@ -80,7 +80,7 @@ func main() {
 		}
 	}()
 	logrus.Info("server started")
-	//平滑重启设置
+	//平滑重启设置 福
 	//Wait for interrupt signal to gracefully shutdown the server with a timeout of 5 seconds.
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt)
