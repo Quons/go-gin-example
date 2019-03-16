@@ -66,7 +66,7 @@ func GetArticles(c *gin.Context) {
 	appG := app.Gin{C: c}
 	valid := validation.Validation{}
 	studentID := c.GetInt64("studentId")
-	logrus.Errorf("studentId:%v,exist:%v", studentID)
+	logrus.Errorf("studentId:%v", studentID)
 	arg := c.Query("state")
 	logrus.Info("......arg:" + arg)
 	state := com.StrTo(arg).MustInt()
