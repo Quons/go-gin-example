@@ -1,12 +1,10 @@
 package logging
 
-/*
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"github.com/Quons/go-gin-example/pkg/file"
-	"github.com/Quons/go-gin-example/pkg/setting"
-	"github.com/gin-gonic/gin/json"
 	"github.com/lestrrat/go-file-rotatelogs"
 	"github.com/pkg/errors"
 	"github.com/rifflock/lfshook"
@@ -14,11 +12,10 @@ import (
 	"path/filepath"
 	"strconv"
 	"time"
-	//"github.com/bshuster-repo/logrus-logstash-hook"
-	"gopkg.in/sohlich/elogrus.v3"
 
-	"github.com/olivere/elastic"
-	"os"
+	"github.com/Quons/go-gin-example/pkg/logging/logstash"
+	"github.com/astaxie/beego"
+	"strings"
 )
 
 var logPath string
@@ -36,7 +33,7 @@ func Setup() {
 		logrus.Fatal("get dirName error")
 	}
 	//设置日志级别
-	logLevel, err := logrus.ParseLevel(setting.AppSetting.LogLevel)
+	logLevel, err := logrus.ParseLevel(beego.AppConfig.String("logLevel"))
 	if err != nil {
 		logrus.Fatal(err.Error())
 	}
@@ -56,29 +53,16 @@ func Setup() {
 	}, &CodeFormatter{})
 	//添加hook
 	logrus.AddHook(lfsHook)
-	client, err := elastic.NewClient(elastic.SetURL("http://10.10.118.34:9200"),elastic.SetSniff(false))
-	if err != nil {
-		logrus.Panic(err)
-	}
-	hostname, err := os.Hostname()
-	if err != nil {
-		logrus.Fatal(err)
-	}
-
-	hook, err := elogrus.NewElasticHook(client, hostname, logrus.DebugLevel, "go-gin-example")
-	if err != nil {
-		logrus.Panic(err)
-	}
-	logrus.AddHook(hook)
-	logrus.WithField("name", "liuyongchao").Errorf("名字错了error")
-	go func() {
-		for {
-			time.Sleep(5 * time.Second)
-			logrus.WithField("name", "liuyongchao").Errorf("名字错了error")
-			logrus.WithField("name", "liuyongchao").Info("名字错了info")
-			logrus.WithField("name", "liuyongchao").Debug("名字错了debug")
+	//elasticSearch 推送配置，如果推动地址不为空，则进行推送
+	enableEsPush := beego.AppConfig.DefaultBool("enableEsPush", false)
+	if enableEsPush {
+		appName := beego.AppConfig.String("appname") + "_" + beego.AppConfig.String("runmode")
+		logtashHook, err := logstash.NewHookWithFields("udp", beego.AppConfig.String("esPushUrl"), "", logrus.Fields{"appname": appName})
+		if err != nil {
+			logrus.Fatal(err)
 		}
-	}()
+		logrus.AddHook(logtashHook)
+	}
 }
 
 //定义formatter ,实现logrus formatter接口
@@ -93,8 +77,8 @@ func (f *CodeFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	}
 	fileLineNum := ""
 	if entry.Caller != nil {
-		execPath, _ := file.GetExecPath()
-		fileLineNum = string([]rune(entry.Caller.File)[len(execPath)+1:])
+		srcIndex := strings.Index(entry.Caller.File, "src")
+		fileLineNum = string([]rune(entry.Caller.File)[srcIndex+4:])
 		fileLineNum = fmt.Sprintf("%s:%v ", fileLineNum, strconv.Itoa(entry.Caller.Line))
 	}
 
@@ -132,36 +116,3 @@ func GetLogrusWriter() *rotatelogs.RotateLogs {
 	}
 	return writer
 }
-
-//获取gin日志writer
-func GetGinLogWriter() *rotatelogs.RotateLogs {
-	ginLogPath, err := file.MkRdir("logs/gin")
-	if err != nil {
-		logrus.Fatal("get log path error")
-	}
-	writer, err := rotatelogs.New(
-		filepath.Join(ginLogPath, "gin.%Y%m%d%H%M"),
-		rotatelogs.WithLinkName(filepath.Join(logPath, "gin.log")), // 生成软链，指向最新日志文件
-		rotatelogs.WithMaxAge(10*time.Hour*24),                     // 文件最大保存时间
-		rotatelogs.WithRotationTime(time.Hour*24),                  // 日志切割时间间隔
-	)
-	if err != nil {
-		logrus.Fatalf("config local file system logger error.%+v", errors.WithStack(err))
-	}
-	return writer
-}
-
-//获取gorm日志writer
-func GetGormLogWriter() *rotatelogs.RotateLogs {
-	writer, err := rotatelogs.New(
-		filepath.Join(logPath, "gorm.%Y%m%d%H%M"),
-		rotatelogs.WithLinkName(filepath.Join(logPath, "gorm.log")), // 生成软链，指向最新日志文件
-		rotatelogs.WithMaxAge(10*time.Hour*24),                      // 文件最大保存时间
-		rotatelogs.WithRotationTime(time.Hour*24),                   // 日志切割时间间隔
-	)
-	if err != nil {
-		logrus.Fatalf("config local file system logger error.%+v", errors.WithStack(err))
-	}
-	return writer
-}
-*/
