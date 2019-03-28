@@ -38,6 +38,7 @@ func Setup() {
 		setting.DatabaseSetting.Name))
 
 	if err != nil {
+		//todo 此处应该改为panic
 		logrus.Error(err)
 	}
 

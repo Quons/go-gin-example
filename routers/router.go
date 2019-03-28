@@ -50,6 +50,7 @@ func registerRouter(r *gin.Engine) {
 	}
 	{
 		apiv1.POST("/getCourse", v1.GetCourse)
+		apiv1.POST("/add", v1.GetCourse)
 	}
 
 }

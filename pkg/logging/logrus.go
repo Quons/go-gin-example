@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/Quons/go-gin-example/pkg/file"
+	"github.com/Quons/go-gin-example/pkg/setting"
+	"github.com/astaxie/beego"
 	"github.com/lestrrat/go-file-rotatelogs"
 	"github.com/pkg/errors"
 	"github.com/rifflock/lfshook"
@@ -14,7 +16,6 @@ import (
 	"time"
 
 	"github.com/Quons/go-gin-example/pkg/logging/logstash"
-	"github.com/astaxie/beego"
 	"strings"
 )
 
@@ -33,7 +34,7 @@ func Setup() {
 		logrus.Fatal("get dirName error")
 	}
 	//设置日志级别
-	logLevel, err := logrus.ParseLevel(beego.AppConfig.String("logLevel"))
+	logLevel, err := logrus.ParseLevel(setting.AppSetting.LogLevel)
 	if err != nil {
 		logrus.Fatal(err.Error())
 	}
@@ -110,6 +111,24 @@ func GetLogrusWriter() *rotatelogs.RotateLogs {
 		rotatelogs.WithLinkName(filepath.Join(logPath, dirName+".log")), // 生成软链，指向最新日志文件
 		rotatelogs.WithMaxAge(10*time.Hour*24),                          // 文件最大保存时间
 		rotatelogs.WithRotationTime(time.Hour*24),                       // 日志切割时间间隔
+	)
+	if err != nil {
+		logrus.Fatalf("config local file system logger error.%+v", errors.WithStack(err))
+	}
+	return writer
+}
+
+//获取gin日志writer
+func GetGinLogWriter() *rotatelogs.RotateLogs {
+	ginLogPath, err := file.MkRdir("logs/gin")
+	if err != nil {
+		logrus.Fatal("get log path error")
+	}
+	writer, err := rotatelogs.New(
+		filepath.Join(ginLogPath, "gin.%Y%m%d%H%M"),
+		rotatelogs.WithLinkName(filepath.Join(logPath, "gin.log")), // 生成软链，指向最新日志文件
+		rotatelogs.WithMaxAge(10*time.Hour*24),                     // 文件最大保存时间
+		rotatelogs.WithRotationTime(time.Hour*24),                  // 日志切割时间间隔
 	)
 	if err != nil {
 		logrus.Fatalf("config local file system logger error.%+v", errors.WithStack(err))
