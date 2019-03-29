@@ -28,7 +28,16 @@ func registerRouter(r *gin.Engine) {
 		c.String(http.StatusOK, "welcome Gin Server:%s\n", name)
 	})*/
 	r.POST("/upload", api.UploadImage)
+
+	brandApi := r.Group("/brand")
+
+	{
+		brandApi.POST("/addBrand", v1.AddBrand)
+		brandApi.POST("/getBrandList", v1.GetBrandList)
+	}
+
 	apiv1 := r.Group("/api/v1")
+
 	//验证token
 	//apiv1.Use(jwt.JWT())
 	apiv1.Use(middleware.CheckToken())
@@ -50,7 +59,6 @@ func registerRouter(r *gin.Engine) {
 	}
 	{
 		apiv1.POST("/getCourse", v1.GetCourse)
-		apiv1.POST("/add", v1.GetCourse)
 	}
 
 }
