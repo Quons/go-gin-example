@@ -42,8 +42,8 @@ func main() {
 	//跨域请求设置
 	corsConfig := cors.Config{
 		AllowAllOrigins:  true,
-		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Authorization",  "Access-Control-Allow-Headers", "Content-Type"},
+		AllowMethods:     []string{"GET", "POST"},
+		AllowHeaders:     []string{"Origin", "Authorization", "Accept","DNT","Referer","User-Agent", "Access-Control-Request-Method", "Access-Control-Allow-Headers", "Content-Type"},
 		ExposeHeaders:    []string{"Content-Length", "Access-Control-Allow-Headers", "Content-Type"},
 		AllowCredentials: true,
 	}

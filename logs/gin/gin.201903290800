@@ -1,0 +1,91 @@
+[GIN] 2019/03/29 - 10:07:29 | 200 |      14.311µs |             ::1 | OPTIONS  /brand/getBrandList
+[GORM] 2019/03/29 sql/Users/quon/go/src/github.com/Quons/go-gin-example/models/brand.go:14272.359078msSELECT * FROM `brand`  [] 4
+[GIN] 2019/03/29 - 10:07:30 | 200 |  273.819441ms |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:08:16 | 200 |       9.169µs |             ::1 | OPTIONS  /brand/getBrandList
+[GORM] 2019/03/29 sql/Users/quon/go/src/github.com/Quons/go-gin-example/models/brand.go:14277.424389msSELECT * FROM `brand`  [] 4
+[GIN] 2019/03/29 - 10:08:17 | 200 |  277.651126ms |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:08:18 | 200 |       7.731µs |             ::1 | OPTIONS  /brand/getBrandList
+[GORM] 2019/03/29 sql/Users/quon/go/src/github.com/Quons/go-gin-example/models/brand.go:14234.695942msSELECT * FROM `brand`  [] 4
+[GIN] 2019/03/29 - 10:08:19 | 200 |  234.885763ms |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:09:02 | 200 |       9.455µs |             ::1 | OPTIONS  /brand/getBrandList
+[GORM] 2019/03/29 sql/Users/quon/go/src/github.com/Quons/go-gin-example/models/brand.go:14305.334818msSELECT * FROM `brand`  [] 4
+[GIN] 2019/03/29 - 10:09:02 | 200 |  305.434638ms |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:09:18 | 404 |       1.757µs |             ::1 | GET      /brand/getBrandList
+[GIN] 2019/03/29 - 10:09:19 | 404 |         1.7µs |             ::1 | GET      /favicon.ico
+[GORM] 2019/03/29 sql/Users/quon/go/src/github.com/Quons/go-gin-example/models/brand.go:14563.907803msSELECT * FROM `brand`  [] 4
+[GIN] 2019/03/29 - 10:10:21 | 200 |  564.352823ms |             ::1 | POST     /brand/getBrandList
+[GORM] 2019/03/29 sql/Users/quon/go/src/github.com/Quons/go-gin-example/models/brand.go:145.460899439sSELECT * FROM `brand`  [] 4
+[GIN] 2019/03/29 - 10:11:37 | 200 |    5.4610654s |             ::1 | POST     /brand/getBrandList
+[GORM] 2019/03/29 sql/Users/quon/go/src/github.com/Quons/go-gin-example/models/brand.go:143.559925276sSELECT * FROM `brand`  [] 4
+[GIN] 2019/03/29 - 10:12:10 | 200 |  3.560089976s |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:12:32 | 200 |      10.552µs |             ::1 | OPTIONS  /brand/getBrandList
+[GORM] 2019/03/29 sql/Users/quon/go/src/github.com/Quons/go-gin-example/models/brand.go:141.035583428sSELECT * FROM `brand`  [] 4
+[GIN] 2019/03/29 - 10:12:34 | 200 |  1.035773505s |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:13:39 | 200 |       8.566µs |             ::1 | OPTIONS  /brand/getBrandList
+[GORM] 2019/03/29 sql/Users/quon/go/src/github.com/Quons/go-gin-example/models/brand.go:14382.7365msSELECT * FROM `brand`  [] 4
+[GIN] 2019/03/29 - 10:13:39 | 200 |  382.876294ms |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:14:03 | 200 |      10.048µs |             ::1 | OPTIONS  /brand/getBrandList
+[GORM] 2019/03/29 sql/Users/quon/go/src/github.com/Quons/go-gin-example/models/brand.go:14357.390657msSELECT * FROM `brand`  [] 4
+[GIN] 2019/03/29 - 10:14:03 | 200 |  357.664599ms |             ::1 | POST     /brand/getBrandList
+[GORM] 2019/03/29 sql/Users/quon/go/src/github.com/Quons/go-gin-example/models/brand.go:14251.26554msSELECT * FROM `brand`  [] 4
+[GIN] 2019/03/29 - 10:20:53 | 200 |  252.669467ms |             ::1 | POST     /brand/getBrandList
+[GORM] 2019/03/29 sql/Users/quon/go/src/github.com/Quons/go-gin-example/models/brand.go:14284.978747msSELECT * FROM `brand`  [] 4
+[GIN] 2019/03/29 - 10:20:55 | 200 |  285.120865ms |             ::1 | POST     /brand/getBrandList
+[GORM] 2019/03/29 sql/Users/quon/go/src/github.com/Quons/go-gin-example/models/brand.go:14272.001668msSELECT * FROM `brand`  [] 4
+[GIN] 2019/03/29 - 10:20:58 | 200 |  272.118359ms |             ::1 | POST     /brand/getBrandList
+[GORM] 2019/03/29 sql/Users/quon/go/src/github.com/Quons/go-gin-example/models/brand.go:14257.938126msSELECT * FROM `brand`  [] 4
+[GIN] 2019/03/29 - 10:20:59 | 200 |  258.066352ms |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:22:07 | 200 |     351.611µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:30:06 | 200 |      15.664µs |             ::1 | OPTIONS  /brand/getBrandList
+[GIN] 2019/03/29 - 10:30:06 | 200 |     263.635µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:30:51 | 200 |      22.787µs |             ::1 | OPTIONS  /brand/getBrandList
+[GIN] 2019/03/29 - 10:30:52 | 200 |      51.575µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:43:08 | 200 |      11.488µs |             ::1 | OPTIONS  /brand/getBrandList
+[GIN] 2019/03/29 - 10:43:08 | 200 |     210.776µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:45:10 | 200 |       26.78µs |             ::1 | OPTIONS  /brand/getBrandList
+[GIN] 2019/03/29 - 10:45:10 | 200 |     196.973µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:46:08 | 200 |      10.366µs |             ::1 | OPTIONS  /brand/getBrandList
+[GIN] 2019/03/29 - 10:46:08 | 200 |     360.698µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:48:27 | 200 |       7.653µs |             ::1 | OPTIONS  /brand/getBrandList
+[GIN] 2019/03/29 - 10:48:27 | 200 |      98.231µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:48:38 | 200 |       11.14µs |             ::1 | OPTIONS  /brand/getBrandList
+[GIN] 2019/03/29 - 10:48:38 | 200 |      39.782µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:49:50 | 200 |      10.267µs |             ::1 | OPTIONS  /brand/getBrandList
+[GIN] 2019/03/29 - 10:49:50 | 200 |      64.704µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:50:46 | 200 |      24.051µs |             ::1 | OPTIONS  /brand/getBrandList
+[GIN] 2019/03/29 - 10:50:46 | 200 |     252.573µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:50:49 | 200 |      32.797µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:50:53 | 200 |      91.461µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:50:54 | 200 |      45.461µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:50:55 | 200 |      41.116µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:50:56 | 200 |      71.399µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:50:56 | 200 |      47.227µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:50:57 | 200 |      47.343µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:50:59 | 200 |       39.52µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:50:59 | 200 |      45.632µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:51:00 | 200 |      50.543µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:51:00 | 200 |      63.384µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:51:02 | 200 |      41.355µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:51:03 | 200 |      30.002µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:51:03 | 200 |      36.637µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:52:17 | 200 |     256.466µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:52:24 | 200 |       7.349µs |             ::1 | OPTIONS  /brand/getBrandList
+[GIN] 2019/03/29 - 10:52:24 | 200 |       69.64µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:52:28 | 200 |      35.869µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 10:56:27 | 200 |     199.532µs |             ::1 | OPTIONS  /brand/getBrandList
+[GIN] 2019/03/29 - 10:56:31 | 200 |      33.533µs |             ::1 | OPTIONS  /brand/getBrandList
+[GIN] 2019/03/29 - 10:57:59 | 200 |       8.905µs |             ::1 | OPTIONS  /brand/getBrandList
+[GIN] 2019/03/29 - 10:57:59 | 200 |     197.828µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 11:04:48 | 404 |      10.903µs |             ::1 | GET      /brand/getBrandList
+[GIN] 2019/03/29 - 11:06:02 | 404 |       9.447µs |             ::1 | GET      /brand/getBrandList
+[GIN] 2019/03/29 - 11:06:23 | 404 |       6.188µs |             ::1 | GET      /brand/getBrandList
+[GIN] 2019/03/29 - 11:06:58 | 200 |     141.348µs |             ::1 | POST     /brand/getBrandList
+[GIN] 2019/03/29 - 11:07:03 | 200 |       80.25µs |             ::1 | POST     /brand/getBrandList
+[GORM] 2019/03/29 sql/Users/quon/go/src/github.com/Quons/go-gin-example/models/brand.go:146.913762msSELECT * FROM `brand`  [] 0
+[GIN] 2019/03/29 - 14:03:17 | 200 |    8.634888ms |             ::1 | POST     /brand/getBrandList
+[GORM] 2019/03/29 sql/Users/quon/go/src/github.com/Quons/go-gin-example/models/brand.go:1416.827002msSELECT * FROM `brand`  [] 2
+[GIN] 2019/03/29 - 14:03:45 | 200 |   16.960458ms |             ::1 | POST     /brand/getBrandList
+[GORM] 2019/03/29 sql/Users/quon/go/src/github.com/Quons/go-gin-example/models/brand.go:149.846159msSELECT * FROM `brand`  [] 2
+[GIN] 2019/03/29 - 14:04:15 | 200 |   10.103575ms |             ::1 | POST     /brand/getBrandList
+[GORM] 2019/03/29 sql/Users/quon/go/src/github.com/Quons/go-gin-example/models/brand.go:145.360718msSELECT * FROM `brand`  [] 2
+[GIN] 2019/03/29 - 14:04:59 | 200 |    5.498145ms |             ::1 | POST     /brand/getBrandList

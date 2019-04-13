@@ -6,7 +6,8 @@ import (
 )
 
 type Brand struct {
-	Name string `form:"name" json:"name" binding:"required"`
+	ID   int64  `form:"id" json:"id"`
+	Name string `form:"name" json:"name"`
 }
 
 func (b *Brand) GetBrandList() ([]models.Brand, error) {
@@ -20,6 +21,15 @@ func (b *Brand) GetBrandList() ([]models.Brand, error) {
 
 func (b *Brand) AddBrand() error {
 	err := models.AddBrand(&models.Brand{Name: b.Name})
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+	return nil
+}
+
+func (b *Brand) DeleteBrand() error {
+	err := models.DeleteBrand(&models.Brand{ID: b.ID})
 	if err != nil {
 		log.Error(err)
 		return err

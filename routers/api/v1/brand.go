@@ -21,13 +21,13 @@ import (
 func AddBrand(c *gin.Context) {
 	appG := app.Gin{C: c}
 	brand := brand_service.Brand{}
-	err := c.ShouldBind(&brand)
-	if err != nil {
+
+	if err := c.ShouldBind(&brand); err != nil || brand.Name == "" {
 		log.Info(err)
 		appG.Response(nil, e.ERROR_INVALID_PARAMS)
 		return
 	}
-	if err = brand.AddBrand(); err != nil {
+	if err := brand.AddBrand(); err != nil {
 		appG.Response(nil, e.ERROR_SERVER_ERROR)
 		return
 	}
@@ -52,5 +52,34 @@ func GetBrandList(c *gin.Context) {
 		appG.Response(nil, e.ERROR_INVALID_PARAMS)
 		return
 	}
+	//list := []models.Brand{{ID: 1, Name: "别克"}, {2, "雪福来"}}
 	appG.Response(list, e.SUCCESS)
+}
+
+// @Tags 删除品牌
+// @Summary 删除品牌
+// @Description 添加品牌
+// @Produce  json
+// @accept application/x-www-form-urlencoded
+// @Param name formData string true "品牌名称"
+// @Success 99999 "ok"
+// @Failure 10000 {string} json "{"code":10000,"data":{},"msg":"服务器错误"}"
+// @Failure 20000 {string} json "{"code":20000,"data":{},"msg":"参数错误"}"
+// @Router /api/v1/getCourse [post]
+func DeleteBrand(c *gin.Context) {
+	appG := app.Gin{C: c}
+	brand := brand_service.Brand{}
+	if err := c.ShouldBind(&brand); err != nil || brand.ID == 0 {
+		log.Error(err)
+		appG.Response(nil, e.ERROR_INVALID_PARAMS)
+		return
+	}
+
+	if err := brand.DeleteBrand(); err != nil {
+		log.Info(err)
+		appG.Response(nil, e.ERROR_SERVER_ERROR)
+		return
+	}
+	//list := []models.Brand{{ID: 1, Name: "别克"}, {2, "雪福来"}}
+	appG.Response("ok", e.SUCCESS)
 }

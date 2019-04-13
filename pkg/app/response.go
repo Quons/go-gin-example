@@ -14,6 +14,7 @@ type Gin struct {
 
 /*返回实体，code[0]为业务返回码，code[1]为http返回码*/
 func (g *Gin) Response(data interface{}, code ...int) {
+	g.C.Header("Access-Control-Allow-Origin", "*")
 	if len(code) < 1 {
 		logrus.Error("invalid code param")
 		g.C.JSON(http.StatusInternalServerError, gin.H{

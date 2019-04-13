@@ -34,6 +34,7 @@ func registerRouter(r *gin.Engine) {
 	{
 		brandApi.POST("/addBrand", v1.AddBrand)
 		brandApi.POST("/getBrandList", v1.GetBrandList)
+		brandApi.POST("/deleteBrand", v1.DeleteBrand)
 	}
 
 	apiv1 := r.Group("/api/v1")
