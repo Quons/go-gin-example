@@ -4,12 +4,12 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/Quons/go-gin-example/common"
 	"github.com/Quons/go-gin-example/models"
 	"github.com/Quons/go-gin-example/pkg/gredis"
 	"github.com/Quons/go-gin-example/pkg/logging"
 	"github.com/Quons/go-gin-example/pkg/setting"
 	"github.com/Quons/go-gin-example/routers"
-	"github.com/Quons/go-gin-example/common"
 	"github.com/gin-contrib/cors"
 	"github.com/sirupsen/logrus"
 	"log"
@@ -21,7 +21,6 @@ import (
 )
 
 func init() {
-	TestFunc()
 	var runmode string
 	flag.StringVar(&runmode, "runmode", "dev", "runmode:dev,test,pre,prod;default dev mode")
 	flag.Parse()
@@ -39,14 +38,14 @@ func init() {
 // @license.name MIOd
 // @license.url https://github.com/Quons/go-gin-example/blob/master/LICENSE
 func main() {
-
+	common.TestFunc()
 	routersInit := routers.InitRouter()
 
 	//跨域请求设置
 	corsConfig := cors.Config{
 		AllowAllOrigins:  true,
 		AllowMethods:     []string{"GET", "POST"},
-		AllowHeaders:     []string{"Origin", "Authorization", "Accept","DNT","Referer","User-Agent", "Access-Control-Request-Method", "Access-Control-Allow-Headers", "Content-Type"},
+		AllowHeaders:     []string{"Origin", "Authorization", "Accept", "DNT", "Referer", "User-Agent", "Access-Control-Request-Method", "Access-Control-Allow-Headers", "Content-Type"},
 		ExposeHeaders:    []string{"Content-Length", "Access-Control-Allow-Headers", "Content-Type"},
 		AllowCredentials: true,
 	}
