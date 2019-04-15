@@ -1,0 +1,11 @@
+2019-04-15 10:09:45 [info] ers/quon/go/go-gin-example/main.go:82 msg:server started
+2019-04-15 10:09:47 [info] ers/quon/go/go-gin-example/main.go:88 msg:Shutdown Server ...
+2019-04-15 10:09:47 [info] ers/quon/go/go-gin-example/main.go:94 msg:Server exiting
+2019-04-15 10:46:25 [error] ers/quon/go/go-gin-example/models/models.go:42 msg:dial tcp 123.59.54.196:3333: i/o timeout
+2019-04-15 10:46:30 [error] ers/quon/go/go-gin-example/models/models.go:64 msg:dial tcp 123.59.54.196:3333: i/o timeout
+2019-04-15 10:46:30 [info] ers/quon/go/go-gin-example/main.go:82 msg:server started
+2019-04-15 10:46:58 [info] ers/quon/go/go-gin-example/main.go:88 msg:Shutdown Server ...
+2019-04-15 10:46:58 [info] ers/quon/go/go-gin-example/main.go:94 msg:Server exiting
+2019-04-15 10:47:11 [info] ers/quon/go/go-gin-example/main.go:82 msg:server started
+2019-04-15 10:47:13 [info] ers/quon/go/go-gin-example/main.go:88 msg:Shutdown Server ...
+2019-04-15 10:47:13 [info] ers/quon/go/go-gin-example/main.go:94 msg:Server exiting
